@@ -1,0 +1,46 @@
+.bar {
+  max-width: 860px;
+  padding-top: clamp(20px, 3vw, 28px);
+}
+
+.message {
+  display: grid;
+  justify-items: center;
+  gap: 16px;
+  max-width: 760px;
+  padding-block: clamp(40px, 7vw, 80px) 0;
+  text-align: center;
+}
+
+.mark {
+  width: 76px;
+  height: 76px;
+}
+
+.title {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: clamp(32px, 4.4vw, 48px);
+  text-wrap: balance;
+}
+
+.text {
+  max-width: 560px;
+  font-family: var(--font-serif);
+  font-size: 20px;
+  color: var(--ink-soft);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.searchWide {
+  width: 100%;
+  margin-top: 12px;
+  text-align: left;
+}

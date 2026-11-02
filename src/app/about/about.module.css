@@ -1,0 +1,165 @@
+.about {
+  display: grid;
+  gap: clamp(48px, 7vw, 80px);
+  max-width: 940px;
+  padding-top: clamp(36px, 6vw, 72px);
+}
+
+.header {
+  display: grid;
+  justify-items: center;
+  gap: 16px;
+  text-align: center;
+}
+
+.title {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: clamp(36px, 5vw, 58px);
+  line-height: 1.08;
+  text-wrap: balance;
+}
+
+.section {
+  display: grid;
+  gap: 20px;
+  scroll-margin-top: 24px;
+}
+
+.sectionTitle {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: clamp(28px, 3.4vw, 38px);
+}
+
+.text {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+.text code,
+.env code {
+  font-size: 15px;
+  padding: 1px 6px;
+  border: 1px solid var(--hairline);
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 2px;
+}
+
+.pipeline {
+  display: grid;
+  gap: 26px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pipeline li {
+  display: flex;
+  gap: 22px;
+  align-items: flex-start;
+}
+
+.pipeline h3 {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 24px;
+  margin-bottom: 6px;
+}
+
+.pipeline p {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--ink-soft);
+}
+
+.services {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.service {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  padding: 22px;
+}
+
+.serviceHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.serviceHead h3 {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 22px;
+}
+
+.on,
+.off {
+  flex: none;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 999px;
+}
+
+.on {
+  color: #1d4d4a;
+  border: 1px solid rgba(44, 124, 120, 0.5);
+  background: rgba(44, 124, 120, 0.08);
+}
+
+.off {
+  color: var(--ink-mute);
+  border: 1px dashed var(--hairline-strong);
+}
+
+.role {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  color: var(--ink-soft);
+}
+
+.where {
+  display: grid;
+  gap: 2px;
+  font-size: 14px;
+}
+
+.cost {
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--ink-mute);
+}
+
+.credits {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 15px;
+  color: var(--ink-soft);
+}
+
+.credits li {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+}
+
+.credits svg {
+  flex: none;
+  transform: translateY(1px);
+}

@@ -1,0 +1,132 @@
+.defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+/* ── Divider ─────────────────────────────────────────────────────────────── */
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 420px;
+  margin-inline: auto;
+}
+
+.dividerLine {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-500) 40%, var(--gold-600));
+}
+
+.dividerLine:last-child {
+  background: linear-gradient(270deg, transparent, var(--gold-500) 40%, var(--gold-600));
+}
+
+.dividerDiamond {
+  width: 5px;
+  height: 5px;
+  transform: rotate(45deg);
+  border: 1px solid var(--gold-600);
+}
+
+/* ── Star numeral ────────────────────────────────────────────────────────── */
+
+.starNumeral {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  flex: none;
+}
+
+.starNumeral svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.starNumeralText {
+  position: relative;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 17px;
+  letter-spacing: 0.06em;
+  color: var(--gold-800);
+}
+
+/* ── Arch ────────────────────────────────────────────────────────────────── */
+
+/*
+ * The crown SVG is 1000×420 user units and spans the full width, so its height
+ * is 42% of the width: `cqw` (container query width) units keep the CSS jambs
+ * locked to the same geometry at every size.
+ */
+.arch {
+  position: relative;
+  container-type: inline-size;
+  width: 100%;
+  max-width: 1040px;
+  margin-inline: auto;
+}
+
+.archCrown {
+  position: absolute;
+  inset: 0 0 auto 0;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+}
+
+.arch::before,
+.arch::after {
+  content: "";
+  position: absolute;
+  top: 41.9cqw;
+  bottom: 0;
+  width: 3.2cqw;
+  pointer-events: none;
+  border-left: 1px solid var(--gold-600);
+  border-right: 1px solid var(--gold-500);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 0L20.69 4.69L27.31 4.69L27.31 11.31L32 16L27.31 20.69L27.31 27.31L20.69 27.31L16 32L11.31 27.31L4.69 27.31L4.69 20.69L0 16L4.69 11.31L4.69 4.69L11.31 4.69Z' fill='none' stroke='%23a7843f' stroke-opacity='.55' stroke-width='.8'/%3E%3C/svg%3E");
+  background-size: 100% auto;
+  background-repeat: repeat-y;
+  opacity: 0.85;
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 55%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 0%, #000 55%, transparent 100%);
+}
+
+.arch::before {
+  left: 0.8cqw;
+}
+
+.arch::after {
+  right: 0.8cqw;
+}
+
+.archBody {
+  position: relative;
+  padding: 13cqw 9cqw 72px;
+}
+
+@media (max-width: 640px) {
+  .archBody {
+    padding: 23cqw 7cqw 56px;
+  }
+}
+
+/* ── Tile band ───────────────────────────────────────────────────────────── */
+
+.tileBand {
+  height: 18px;
+  border-top: 1px solid var(--gold-600);
+  border-bottom: 1px solid var(--gold-600);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 0L20.69 4.69L27.31 4.69L27.31 11.31L32 16L27.31 20.69L27.31 27.31L20.69 27.31L16 32L11.31 27.31L4.69 27.31L4.69 20.69L0 16L4.69 11.31L4.69 4.69L11.31 4.69Z' fill='none' stroke='%23c2a05a' stroke-opacity='.75' stroke-width='1'/%3E%3C/svg%3E");
+  background-size: 16px 16px;
+  background-position: center;
+}

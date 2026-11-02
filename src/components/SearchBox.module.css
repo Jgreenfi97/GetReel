@@ -1,0 +1,134 @@
+.form {
+  width: 100%;
+}
+
+.field {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  background:
+    linear-gradient(170deg, rgba(255, 255, 255, 0.97), rgba(251, 248, 241, 0.94)),
+    var(--marble-texture);
+  background-size: auto, 900px 900px;
+  border: 1px solid var(--hairline-strong);
+  border-radius: 3px;
+  box-shadow:
+    var(--shadow-lift),
+    inset 0 0 0 5px rgba(255, 255, 255, 0.9),
+    inset 0 0 0 6px var(--hairline-faint);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.field:focus-within {
+  border-color: var(--gold-600);
+  box-shadow:
+    0 2px 4px rgba(58, 44, 20, 0.08),
+    0 24px 70px rgba(138, 106, 46, 0.22),
+    inset 0 0 0 5px rgba(255, 255, 255, 0.9),
+    inset 0 0 0 6px rgba(167, 132, 63, 0.45);
+}
+
+.textarea {
+  flex: 1;
+  min-width: 0;
+  resize: none;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font-serif);
+  line-height: 1.4;
+}
+
+.textarea::placeholder {
+  color: var(--ink-mute);
+  font-style: italic;
+  opacity: 1;
+}
+
+.textarea:focus-visible {
+  outline: none;
+}
+
+.submit {
+  flex: none;
+}
+
+/* Hero: the big field on the home page */
+
+.hero .field {
+  padding: 18px 18px 18px 26px;
+}
+
+.hero .textarea {
+  font-size: clamp(21px, 2.6vw, 25px);
+  min-height: 104px;
+  padding: 8px 0;
+}
+
+.compact .field {
+  padding: 8px 8px 8px 18px;
+  align-items: center;
+}
+
+.compact .textarea {
+  font-size: 19px;
+  padding: 6px 0;
+  min-height: 38px;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 12px;
+  padding-inline: 4px;
+}
+
+.hint,
+.count {
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--ink-mute);
+}
+
+.hint kbd {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  padding: 1px 6px;
+  border: 1px solid var(--hairline);
+  border-bottom-width: 2px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.error {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #7a2f22;
+}
+
+@media (max-width: 640px) {
+  .hero .field {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 16px;
+  }
+
+  .hero .submit {
+    width: 100%;
+  }
+
+  .hint {
+    display: none;
+  }
+
+  .compact .submit span {
+    display: none;
+  }
+
+  .compact .submit {
+    padding-inline: 16px;
+  }
+}

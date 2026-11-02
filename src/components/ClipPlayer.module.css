@@ -1,0 +1,179 @@
+.figure {
+  margin: 0;
+  display: grid;
+  gap: 12px;
+}
+
+/* A 16:9 screen set in black marble with a gilt bezel */
+.screen {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  overflow: hidden;
+  background: #050505;
+  border-radius: 2px;
+  box-shadow:
+    0 0 0 1px rgba(214, 185, 120, 0.55),
+    0 0 0 6px #0b0a09,
+    0 0 0 7px rgba(214, 185, 120, 0.35),
+    0 26px 60px rgba(0, 0, 0, 0.45);
+}
+
+.iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.facade {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  border: 0;
+  padding: 0;
+  background: #050505;
+  cursor: pointer;
+  color: var(--onyx);
+}
+
+.still {
+  object-fit: cover;
+  opacity: 0.86;
+  transition: opacity 0.4s ease, transform 1.2s ease;
+}
+
+.facade:hover .still {
+  opacity: 0.96;
+  transform: scale(1.02);
+}
+
+.vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0, 0, 0, 0.55) 100%);
+}
+
+.play {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 78px;
+  height: 78px;
+  padding-left: 4px;
+  border-radius: 50%;
+  background: var(--gold-foil);
+  box-shadow:
+    0 0 0 6px rgba(15, 14, 12, 0.35),
+    0 0 0 7px rgba(241, 229, 196, 0.55),
+    0 14px 40px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.facade:hover .play,
+.facade:focus-visible .play {
+  transform: scale(1.07);
+  box-shadow:
+    0 0 0 8px rgba(15, 14, 12, 0.35),
+    0 0 0 9px rgba(241, 229, 196, 0.8),
+    0 18px 50px rgba(0, 0, 0, 0.55);
+}
+
+.rollLabel {
+  position: absolute;
+  bottom: 18px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--gold-200);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8);
+}
+
+.caption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+  padding-inline: 2px;
+}
+
+.kind {
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold-700);
+}
+
+.clipTitle {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 17px;
+  color: var(--ink-soft);
+}
+
+/* No clip: an empty, softly lit screen linking out to YouTube */
+.empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 24px;
+  text-align: center;
+  text-decoration: none;
+  color: var(--gold-200);
+  background:
+    radial-gradient(ellipse at 50% 38%, rgba(241, 229, 196, 0.13), transparent 62%),
+    linear-gradient(180deg, rgba(10, 9, 8, 0.4), rgba(10, 9, 8, 0.75)),
+    var(--onyx-texture);
+  background-size: auto, auto, 900px 900px;
+}
+
+.emptyMark {
+  width: 56px;
+  height: 56px;
+  opacity: 0.9;
+  transition: transform 1.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.empty:hover .emptyMark {
+  transform: rotate(90deg);
+}
+
+.emptyTitle {
+  font-family: var(--font-display);
+  font-size: clamp(13px, 1.6vw, 16px);
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+}
+
+.emptyText {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  color: rgba(241, 229, 196, 0.78);
+}
+
+.emptyAction {
+  margin-top: 8px;
+}
+
+@media (max-width: 520px) {
+  .play {
+    width: 62px;
+    height: 62px;
+  }
+
+  .emptyText {
+    font-size: 16px;
+  }
+}
