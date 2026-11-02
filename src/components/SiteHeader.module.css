@@ -75,3 +75,10 @@
     letter-spacing: 0.14em;
   }
 }
+
+/* The smallest phones can't fit the logo and both links; the footer keeps this one. */
+@media (max-width: 400px) {
+  .collapsible {
+    display: none;
+  }
+}

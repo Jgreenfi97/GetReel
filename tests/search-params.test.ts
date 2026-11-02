@@ -1,13 +1,11 @@
 import { describe, expect, it } from "vitest";
 
 import {
-  filmLabel,
-  inputKey,
+  titleLabel,
   LIMITS,
   normalizeInput,
   parseSearchParams,
   searchHref,
-  withClue,
   withExcluded,
 } from "@/lib/search-params";
 
@@ -55,17 +53,11 @@ describe("search URLs", () => {
 describe("refinement helpers", () => {
   const base = { description: "a film", clues: [], excluded: [] };
 
-  it("adds clues and exclusions", () => {
-    expect(withClue(base, "it was animated").clues).toEqual(["it was animated"]);
-    expect(withExcluded(base, [filmLabel("Heat", 1995), filmLabel("Ronin", null)]).excluded).toEqual([
+  it("adds exclusions without duplicates", () => {
+    expect(withExcluded(base, ["Heat (1995)", "heat (1995)"]).excluded).toEqual(["Heat (1995)"]);
+    expect(withExcluded(base, [titleLabel("Heat", 1995), titleLabel("Ronin", null)]).excluded).toEqual([
       "Heat (1995)",
       "Ronin",
     ]);
-  });
-
-  it("produces the same cache key regardless of exclusion order", () => {
-    const a = { ...base, excluded: ["A (2000)", "B (2001)"] };
-    const b = { ...base, excluded: ["B (2001)", "A (2000)"] };
-    expect(inputKey(a)).toBe(inputKey(b));
   });
 });

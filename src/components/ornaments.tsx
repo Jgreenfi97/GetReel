@@ -48,9 +48,6 @@ const MARQUEE_BULBS = Array.from({ length: 28 }, (_, i) => {
   return { cx: fmt(50 + 44.7 * Math.cos(a)), cy: fmt(50 + 44.7 * Math.sin(a)) };
 });
 
-/** One star-and-cross tile (40×40); neighbouring stars touch at their points. */
-export const KHATAM_TILE_PATH = starPath(20, 20, 20);
-
 // ── Shared gradients ────────────────────────────────────────────────────────
 
 /**

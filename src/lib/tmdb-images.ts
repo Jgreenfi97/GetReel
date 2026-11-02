@@ -9,13 +9,15 @@
 
 export const TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p/";
 
-export type TmdbImageKind = "poster" | "backdrop" | "profile" | "logo";
+export type TmdbImageKind = "poster" | "backdrop" | "profile" | "logo" | "still";
 
 const SIZES: Record<TmdbImageKind, readonly number[]> = {
   poster: [92, 154, 185, 342, 500, 780],
   backdrop: [300, 780, 1280],
   profile: [45, 185],
   logo: [45, 92, 154, 185, 300, 500],
+  /** Frames from individual episodes. */
+  still: [92, 185, 300],
 };
 
 const KINDS = Object.keys(SIZES) as TmdbImageKind[];

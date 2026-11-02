@@ -31,7 +31,8 @@
 }
 
 .query {
-  max-width: 640px;
+  max-width: min(640px, 100%);
+  overflow-wrap: anywhere;
   font-family: var(--font-serif);
   font-size: clamp(22px, 3vw, 30px);
   line-height: 1.3;

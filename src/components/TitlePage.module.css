@@ -78,6 +78,11 @@
   font-size: 14px;
 }
 
+.facts > span {
+  display: inline-block;
+  max-width: 100%;
+}
+
 .genres {
   display: flex;
   flex-wrap: wrap;
@@ -300,4 +305,43 @@
     grid-template-columns: 1fr;
     gap: 2px;
   }
+}
+
+/* ── Seasons (series) ────────────────────────────────────────────────────── */
+
+.seasons {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(46%, 150px), 1fr));
+  gap: clamp(18px, 3vw, 28px) clamp(14px, 2.4vw, 22px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.season {
+  display: grid;
+  gap: 6px;
+  text-align: center;
+}
+
+.seasonName {
+  margin-top: 8px;
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 19px;
+  line-height: 1.2;
+}
+
+.seasonMeta {
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--ink-mute);
+}
+
+.seasonsMore {
+  text-align: center;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 18px;
+  color: var(--ink-soft);
 }

@@ -15,7 +15,7 @@ export default function NotFound() {
         <p className="eyebrow">Error 404</p>
         <h1 className={styles.title}>This reel is missing from the archive</h1>
         <p className={styles.text}>
-          The page you were looking for has been misfiled. Perhaps describe the film instead?
+          The page you were looking for has been misfiled. Perhaps describe the film or show instead?
         </p>
         <div className={styles.search}>
           <SearchBox />

@@ -3,6 +3,8 @@
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 
+import { nestQuotes } from "@/lib/format";
+
 import { ReelStar } from "./ornaments";
 import styles from "./ReelLoader.module.css";
 
@@ -11,6 +13,7 @@ const MESSAGES = [
   "Threading the projector…",
   "Checking the credits…",
   "Asking the usher who saw it last…",
+  "Flipping through the TV listings…",
   "Dusting off the reels…",
   "Cueing up the scene…",
 ];
@@ -18,7 +21,7 @@ const MESSAGES = [
 function SearchingFor() {
   const q = useSearchParams().get("q");
   if (!q) return null;
-  return <p className={styles.query}>“{q.length > 160 ? `${q.slice(0, 157)}…` : q}”</p>;
+  return <p className={styles.query}>“{nestQuotes(q.length > 160 ? `${q.slice(0, 157)}…` : q)}”</p>;
 }
 
 /** Shown while Claude, TMDB and YouTube do their work. */

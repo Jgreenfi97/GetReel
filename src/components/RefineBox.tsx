@@ -10,7 +10,7 @@ import styles from "./RefineBox.module.css";
 
 type RefineBoxProps = {
   input: SearchInput;
-  /** Films ruled out on this page that should stay ruled out. */
+  /** Titles ruled out on this page that should stay ruled out. */
   ruledOut?: string[];
   /** A question from the archivist; the answer is sent along with it. */
   question?: string | null;
@@ -63,7 +63,7 @@ export function RefineBox({ input, ruledOut = [], question, title, placeholder }
           id={`${id}-a`}
           type="text"
           value={answer}
-          maxLength={LIMITS.clue - (question?.length ?? 0) - 1}
+          maxLength={Math.max(60, LIMITS.clue - (question?.length ?? 0) - 1)}
           placeholder={placeholder ?? (question ? "Your answer…" : "e.g. “it was animated”, “late 90s”, “set in Paris”")}
           onChange={(e) => {
             setAnswer(e.target.value);

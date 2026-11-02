@@ -1,5 +1,6 @@
 import "server-only";
 
+import { parseFallbackSetting } from "./fallbacks";
 import type { Features } from "./types";
 
 /**
@@ -35,6 +36,8 @@ export function getConfig() {
     anthropicApiKey: forceDemo ? undefined : env("ANTHROPIC_API_KEY"),
     anthropicModel: env("ANTHROPIC_MODEL") ?? DEFAULT_MODEL,
     anthropicEffort: effort && EFFORTS.includes(effort) ? effort : DEFAULT_EFFORT,
+    /** Backup models for wrongly declined searches (see fallbacks.ts). */
+    anthropicFallbacks: parseFallbackSetting(env("ANTHROPIC_FALLBACK_MODELS")),
     tmdbKey: forceDemo ? undefined : (env("TMDB_API_KEY") ?? env("TMDB_READ_ACCESS_TOKEN")),
     youtubeKey: forceDemo ? undefined : env("YOUTUBE_API_KEY"),
     watchRegion: (env("WATCH_REGION") ?? "US").toUpperCase().slice(0, 2),

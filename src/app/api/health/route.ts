@@ -1,6 +1,7 @@
 import { connection } from "next/server";
 
 import { getConfig, getFeatures } from "@/lib/config";
+import { describeFallbackSetting } from "@/lib/fallbacks";
 
 /**
  * GET /api/health
@@ -17,7 +18,14 @@ export async function GET() {
     status: "ok",
     mode: features.claude ? "live" : "demo",
     services: {
-      claude: features.claude ? { enabled: true, model: config.anthropicModel, effort: config.anthropicEffort } : { enabled: false },
+      claude: features.claude
+        ? {
+            enabled: true,
+            model: config.anthropicModel,
+            effort: config.anthropicEffort,
+            backupModels: describeFallbackSetting(config.anthropicFallbacks),
+          }
+        : { enabled: false },
       tmdb: { enabled: features.tmdb, region: config.watchRegion },
       youtube: { enabled: features.youtube },
     },

@@ -9,14 +9,14 @@ import styles from "./about.module.css";
 
 export const metadata: Metadata = {
   title: "About",
-  description: "How GetReel finds the films you half-remember, and how to switch on live search.",
+  description: "How GetReel finds the films and TV shows you half-remember, and how to switch on live search.",
 };
 
 const SERVICES = [
   {
     key: "claude" as const,
     name: "Claude (Anthropic)",
-    role: "Works out which film you’re describing",
+    role: "Works out which film or show you’re describing",
     env: "ANTHROPIC_API_KEY",
     where: "platform.claude.com → API keys",
     href: "https://platform.claude.com/settings/keys",
@@ -25,7 +25,7 @@ const SERVICES = [
   {
     key: "tmdb" as const,
     name: "The Movie Database",
-    role: "Posters, cast, trailers and where to watch",
+    role: "Posters, cast, trailers, episodes and where to watch",
     env: "TMDB_API_KEY",
     where: "themoviedb.org → Settings → API",
     href: "https://www.themoviedb.org/settings/api",
@@ -50,10 +50,10 @@ export default function AboutPage() {
       <main id="main" className={`page container ${styles.about}`}>
         <header className={styles.header}>
           <p className="eyebrow">About GetReel</p>
-          <h1 className={styles.title}>A search engine for the films you can’t quite name</h1>
+          <h1 className={styles.title}>A search engine for the films and shows you can’t quite name</h1>
           <p className="lede">
             You remember the feeling, a face, a single image, but not the title. GetReel works from whatever you have and
-            brings back the film and the scene.
+            brings back the film or series, the episode and the scene.
           </p>
           <Divider />
         </header>
@@ -68,9 +68,12 @@ export default function AboutPage() {
               <div>
                 <h3>The archivist reads your description</h3>
                 <p>
-                  Claude, an AI model by Anthropic, weighs your clues the way a film buff would: distinctive details count
-                  for more than generic ones, and it expects memory to be a little wrong. It returns up to five likely
-                  films, each with a confidence score and its reasons.
+                  Claude, an AI model by Anthropic, weighs your clues the way a devoted film and TV buff would:
+                  distinctive details count for more than generic ones, and it expects memory to be a little wrong. It
+                  knows Hollywood and network television as well as international cinema and series, from K-dramas to
+                  Spanish thrillers, and returns up to five likely titles, each with a confidence score and its reasons.
+                  If a safety filter ever turns down a harmless description, a closely related backup model answers
+                  instead.
                 </p>
               </div>
             </li>
@@ -80,7 +83,8 @@ export default function AboutPage() {
                 <h3>Each guess is checked against the record</h3>
                 <p>
                   Every candidate is matched to The Movie Database to confirm the title and year and fetch the poster,
-                  cast, trailers and streaming options.
+                  cast, trailers and streaming options. When you describe a particular episode, it is checked against
+                  the series’ real episode list.
                 </p>
               </div>
             </li>
@@ -90,7 +94,7 @@ export default function AboutPage() {
                 <h3>The projector finds your scene</h3>
                 <p>
                   For the top match we search YouTube for the moment you described. Otherwise you get the official clip
-                  or trailer. Rule films out or add a detail, and the search picks up where it left off.
+                  or trailer. Rule titles out or add a detail, and the search picks up where it left off.
                 </p>
               </div>
             </li>
@@ -111,7 +115,7 @@ export default function AboutPage() {
                 <div className={styles.serviceHead}>
                   <h3>{s.name}</h3>
                   <span className={features[s.key] ? styles.on : styles.off}>
-                    {features[s.key] ? "Connected" : "Not set"}
+                    {features[s.key] ? "Key added" : "Not set"}
                   </span>
                 </div>
                 <p className={styles.role}>{s.role}</p>
@@ -138,7 +142,7 @@ export default function AboutPage() {
             Privacy
           </h2>
           <p className={styles.text}>
-            What you type is sent to Anthropic to identify the film and is not stored by GetReel beyond a short-lived
+            What you type is sent to Anthropic to identify the title and is not stored by GetReel beyond a short-lived
             cache that makes repeat searches instant. Clips are loaded from YouTube only when you press play.
           </p>
         </section>
@@ -159,7 +163,7 @@ export default function AboutPage() {
               <Khatam size={12} /> Clips and trailers play from YouTube.
             </li>
             <li>
-              <Khatam size={12} /> Film identification by Claude, from Anthropic.
+              <Khatam size={12} /> Films and shows identified by Claude, from Anthropic.
             </li>
           </ul>
           <p>

@@ -13,7 +13,7 @@ export function SiteHeader({ home = false }: { home?: boolean }) {
       <div className={`container ${styles.inner}`}>
         {home ? <span className={styles.est}>Est. MMXXVI</span> : <Logo size="sm" />}
         <nav aria-label="Main" className={styles.nav}>
-          <Link href="/#how-it-works" className={styles.navLink}>
+          <Link href="/#how-it-works" className={`${styles.navLink} ${home ? "" : styles.collapsible}`}>
             How it works
           </Link>
           <Link href="/about" className={styles.navLink}>

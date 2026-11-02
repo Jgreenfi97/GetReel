@@ -89,26 +89,13 @@ export function searchHref(input: SearchInput): string {
   return `/search?${qs.toString()}`;
 }
 
-/** "Title (Year)" label used to rule a film out. */
-export function filmLabel(title: string, year: number | null): string {
+/** "Title (Year)" label used to rule a film or show out. */
+export function titleLabel(title: string, year: number | null): string {
   return year ? `${title} (${year})` : title;
-}
-
-export function withClue(input: SearchInput, clue: string): SearchInput {
-  return normalizeInput({ ...input, clues: [...input.clues, clue] }) ?? input;
 }
 
 export function withExcluded(input: SearchInput, labels: string[]): SearchInput {
   return normalizeInput({ ...input, excluded: [...input.excluded, ...labels] }) ?? input;
-}
-
-/** A stable cache key for an input (order of clues/exclusions matters little). */
-export function inputKey(input: SearchInput): string {
-  return JSON.stringify([
-    input.description.toLowerCase(),
-    input.clues.map((c) => c.toLowerCase()),
-    [...input.excluded].map((e) => e.toLowerCase()).sort(),
-  ]);
 }
 
 export function youtubeSearchUrl(query: string): string {

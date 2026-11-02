@@ -13,9 +13,9 @@ export type SearchErrorCode =
   | "unknown";
 
 const MESSAGES: Record<SearchErrorCode, string> = {
-  invalid_input: "Tell us a little more about the film. A few words is enough to start.",
+  invalid_input: "Tell us a little more. A few words about the film or show is enough to start.",
   rate_limited: "You've run a lot of searches in a short time. Take a breather and try again in a few minutes.",
-  refused: "Our archivist couldn't help with that description. Try describing the film a different way.",
+  refused: "Our archivist couldn't help with that description. Try describing it a different way.",
   auth: "The search service isn't configured correctly (the API key was rejected).",
   busy: "The archive is very busy right now. Please try again in a moment.",
   network: "We couldn't reach the archive. Check your connection and try again.",

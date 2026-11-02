@@ -12,7 +12,7 @@ export function SiteFooter() {
       <div className={`container ${styles.inner}`}>
         <div className={styles.brand}>
           <Logo size="md" onDark />
-          <p className={styles.tagline}>The archive of half-remembered films.</p>
+          <p className={styles.tagline}>The archive of half-remembered films and shows.</p>
         </div>
 
         <nav aria-label="Footer" className={styles.links}>
@@ -36,7 +36,7 @@ export function SiteFooter() {
             <a href="https://www.justwatch.com" target="_blank" rel="noopener noreferrer">
               JustWatch
             </a>
-            . Clips play from YouTube. Films identified with Claude by Anthropic.
+            . Clips play from YouTube. Films and shows identified by Claude, from Anthropic.
           </p>
         </div>
       </div>

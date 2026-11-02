@@ -1,10 +1,12 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState, type Ref } from "react";
 
-import { filmLabel, searchHref, withExcluded } from "@/lib/search-params";
-import type { FilmMatch, SearchResult, Video } from "@/lib/types";
+import { episodeLabel, formatDate, kindLabel, nestQuotes, plural, yearsLabel } from "@/lib/format";
+import { searchHref, titleLabel, withExcluded } from "@/lib/search-params";
+import type { SearchResult, TitleMatch, Video } from "@/lib/types";
 
 import { ClipPlayer } from "./ClipPlayer";
 import { ConfidenceMeter } from "./ConfidenceMeter";
@@ -28,15 +30,15 @@ export function ResultsView({ result, examples = [] }: { result: SearchResult; e
   const { input, matches } = result;
   const [rejected, setRejected] = useState<number[]>([]);
   const [selected, setSelected] = useState(0);
-  const [lastRejected, setLastRejected] = useState<FilmMatch | null>(null);
+  const [lastRejected, setLastRejected] = useState<TitleMatch | null>(null);
   const [announcement, setAnnouncement] = useState("");
   const featureRef = useRef<HTMLElement>(null);
 
   const visible = matches.filter((m) => !rejected.includes(m.rank));
   const featured = visible.find((m) => m.rank === selected) ?? visible[0] ?? null;
   const contenders = visible.filter((m) => m !== featured);
-  const ruledOutLabels = matches.filter((m) => rejected.includes(m.rank)).map((m) => filmLabel(m.title, m.year));
-  const noneOfTheseHref = searchHref(withExcluded(input, matches.map((m) => filmLabel(m.title, m.year))));
+  const ruledOutLabels = matches.filter((m) => rejected.includes(m.rank)).map((m) => titleLabel(m.title, m.year));
+  const noneOfTheseHref = searchHref(withExcluded(input, matches.map((m) => titleLabel(m.title, m.year))));
 
   // The undo toast fades after a few seconds.
   useEffect(() => {
@@ -45,13 +47,13 @@ export function ResultsView({ result, examples = [] }: { result: SearchResult; e
     return () => window.clearTimeout(timer);
   }, [lastRejected]);
 
-  function screen(match: FilmMatch) {
+  function screen(match: TitleMatch) {
     setSelected(match.rank);
     setAnnouncement(`Now screening ${match.title}.`);
     requestAnimationFrame(() => featureRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
   }
 
-  function reject(match: FilmMatch) {
+  function reject(match: TitleMatch) {
     setRejected((r) => [...r, match.rank]);
     setLastRejected(match);
     const next = visible.find((m) => m.rank !== match.rank);
@@ -93,7 +95,6 @@ export function ResultsView({ result, examples = [] }: { result: SearchResult; e
             key={featured.rank}
             ref={featureRef}
             match={featured}
-            input={result.input}
             isTop={featured.rank === 0}
             onReject={() => reject(featured)}
           />
@@ -171,12 +172,10 @@ function Summary({ result }: { result: SearchResult }) {
 
   return (
     <section className={`container ${styles.summary}`} aria-labelledby="summary-title">
-      <p id="summary-title" className="eyebrow">
-        You remembered
-      </p>
-      <blockquote className={styles.quote}>
-        <p>“{input.description}”</p>
-      </blockquote>
+      <p className="eyebrow">You remembered</p>
+      <h1 id="summary-title" className={styles.quote}>
+        “{nestQuotes(input.description)}”
+      </h1>
       {(input.clues.length > 0 || input.excluded.length > 0) && (
         <ul className={styles.refinements} aria-label="Details added">
           {input.clues.map((clue) => (
@@ -196,7 +195,7 @@ function Summary({ result }: { result: SearchResult }) {
               <Link
                 href={searchHref({ ...input, excluded: input.excluded.filter((e) => e !== label) })}
                 className={`chip ${styles.excludedChip}`}
-                title="Bring this film back"
+                title="Bring this title back"
               >
                 Not <s>{label}</s> <span className={styles.remove}>✕</span>
                 <span className="visually-hidden">(bring back)</span>
@@ -217,8 +216,7 @@ function Summary({ result }: { result: SearchResult }) {
 // ── Feature presentation ─────────────────────────────────────────────────────
 
 type FeatureProps = {
-  match: FilmMatch;
-  input: SearchResult["input"];
+  match: TitleMatch;
   isTop: boolean;
   onReject: () => void;
   ref: Ref<HTMLElement>;
@@ -229,11 +227,21 @@ function Feature({ match, isTop, onReject, ref }: FeatureProps) {
   const [active, setActive] = useState(0);
   const [found, setFound] = useState(false);
   const clip = videos[active] ?? null;
+  const tv = match.kind === "tv";
   const facts = [
-    match.year ? String(match.year) : null,
-    match.runtime ? `${match.runtime} min` : null,
-    match.genres.slice(0, 3).join(", ") || null,
+    yearsLabel(match),
+    tv
+      ? match.seasonCount
+        ? plural(match.seasonCount, "season")
+        : null
+      : match.runtime
+        ? `${match.runtime} min`
+        : null,
+    tv ? (match.networks[0] ?? null) : null,
+    match.language,
+    match.genres.slice(0, tv ? 2 : 3).join(", ") || null,
   ].filter((f): f is string => Boolean(f));
+  const detailsHref = match.tmdbId ? `/${match.kind}/${match.tmdbId}` : null;
 
   return (
     <section ref={ref} className={`container ${styles.feature}`} aria-labelledby="feature-title">
@@ -262,20 +270,25 @@ function Feature({ match, isTop, onReject, ref }: FeatureProps) {
           <h2 id="feature-title" className={styles.title}>
             {match.title}
           </h2>
-          {match.originalTitle && <p className={styles.originalTitle}>{match.originalTitle}</p>}
-          {facts.length > 0 && (
-            <p className={`meta ${styles.facts}`}>
-              {facts.map((f, i) => (
-                <span key={f} className={i > 0 ? "meta-sep" : undefined}>
-                  {f}
-                </span>
-              ))}
+          {match.originalTitle && (
+            <p className={styles.originalTitle} lang={match.languageCode ?? undefined}>
+              {match.originalTitle}
             </p>
           )}
+          <p className={`meta ${styles.facts}`}>
+            <span className={styles.kindBadge}>{kindLabel(match.kind)}</span>
+            {facts.map((f, i) => (
+              <span key={`${i}-${f}`} className={i > 0 ? "meta-sep" : undefined}>
+                {f}
+              </span>
+            ))}
+          </p>
 
           <ConfidenceMeter value={match.confidence} />
 
           <p className={styles.why}>{match.why}</p>
+
+          {match.episode && <EpisodePanel episode={match.episode} />}
 
           {match.scene && (
             <p className={styles.scene}>
@@ -301,12 +314,12 @@ function Feature({ match, isTop, onReject, ref }: FeatureProps) {
             </ul>
           )}
 
-          {(match.director || match.cast.length > 0) && (
+          {(match.madeBy || match.cast.length > 0) && (
             <dl className={styles.credits}>
-              {match.director && (
+              {match.madeBy && (
                 <div>
-                  <dt>Directed by</dt>
-                  <dd>{match.director}</dd>
+                  <dt>{tv ? "Created by" : "Directed by"}</dt>
+                  <dd>{match.madeBy}</dd>
                 </div>
               )}
               {match.cast.length > 0 && (
@@ -328,8 +341,8 @@ function Feature({ match, isTop, onReject, ref }: FeatureProps) {
               <div>
                 <p className={styles.foundTitle}>Found it. Enjoy the show.</p>
                 <p className={styles.foundLinks}>
-                  {match.tmdbId && (
-                    <Link href={`/movie/${match.tmdbId}`} className="link">
+                  {detailsHref && (
+                    <Link href={detailsHref} className="link">
                       Full credits &amp; trailers
                     </Link>
                   )}
@@ -358,8 +371,8 @@ function Feature({ match, isTop, onReject, ref }: FeatureProps) {
               <button type="button" className="btn btn--ghost" onClick={onReject}>
                 Not it
               </button>
-              {match.tmdbId && (
-                <Link href={`/movie/${match.tmdbId}`} className={`link ${styles.detailsLink}`}>
+              {detailsHref && (
+                <Link href={detailsHref} className={`link ${styles.detailsLink}`}>
                   Full details →
                 </Link>
               )}
@@ -371,9 +384,38 @@ function Feature({ match, isTop, onReject, ref }: FeatureProps) {
   );
 }
 
+// ── Episode ──────────────────────────────────────────────────────────────────
+
+function EpisodePanel({ episode }: { episode: NonNullable<TitleMatch["episode"]> }) {
+  const aired = formatDate(episode.airDate);
+  return (
+    <div className={styles.episode}>
+      {episode.still && (
+        <div className={styles.episodeStill}>
+          <Image src={episode.still} alt="" fill sizes="168px" className={styles.episodeImage} />
+        </div>
+      )}
+      <div className={styles.episodeText}>
+        <p className={styles.sceneLabel}>The episode</p>
+        <p className={styles.episodeTitle}>
+          {episodeLabel(episode)}
+          {episode.title && (
+            <>
+              {" "}
+              <em>“{episode.title}”</em>
+            </>
+          )}
+        </p>
+        {aired && <p className="meta">First aired {aired}</p>}
+        {episode.overview && <p className={styles.episodeOverview}>{episode.overview}</p>}
+      </div>
+    </div>
+  );
+}
+
 // ── Contender card ───────────────────────────────────────────────────────────
 
-function ContenderCard({ match, onScreen, onReject }: { match: FilmMatch; onScreen: () => void; onReject: () => void }) {
+function ContenderCard({ match, onScreen, onReject }: { match: TitleMatch; onScreen: () => void; onReject: () => void }) {
   return (
     <li className={`slab ${styles.card}`}>
       <button type="button" className={styles.cardPoster} onClick={onScreen} tabIndex={-1} aria-hidden="true">
@@ -387,8 +429,9 @@ function ContenderCard({ match, onScreen, onReject }: { match: FilmMatch; onScre
       <div className={styles.cardBody}>
         <h3 className={styles.cardTitle}>{match.title}</h3>
         <p className="meta">
-          {match.year ?? "Year unknown"}
-          {match.director && <span className="meta-sep">{match.director}</span>}
+          {kindLabel(match.kind)}
+          <span className="meta-sep">{yearsLabel(match) ?? "Year unknown"}</span>
+          {match.madeBy && <span className="meta-sep">{match.madeBy}</span>}
         </p>
         <ConfidenceMeter value={match.confidence} size="sm" />
         <p className={styles.cardWhy}>{match.why}</p>
@@ -418,7 +461,7 @@ function Stumped({ result, examples }: { result: SearchResult; examples: Example
       </h2>
       <p className={styles.sectionLede}>
         {result.mode === "demo"
-          ? "Demo mode only knows a handful of films. Try one of these, or add an Anthropic API key to search them all."
+          ? "Demo mode only knows a handful of films and shows. Try one of these, or add an Anthropic API key to search them all."
           : "We couldn’t place that one yet. Add another detail you remember: an actor, a decade, a setting, a line of dialogue."}
       </p>
       {result.mode === "demo" ? (

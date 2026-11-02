@@ -25,7 +25,7 @@ function siteUrl(): URL {
 }
 
 const description =
-  "Describe a movie you can’t quite remember — a scene, a line, a face, a feeling — and GetReel finds the film and rolls the clip.";
+  "Describe a movie or TV show you can’t quite remember — a scene, a line, a face, a feeling — and GetReel finds it and rolls the clip.";
 
 export const metadata: Metadata = {
   metadataBase: siteUrl(),

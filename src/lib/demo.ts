@@ -1,18 +1,30 @@
 import { normalizeTitle, toIdentification, type RawCandidate } from "./identification";
-import type { Identification, SearchInput } from "./types";
+import type { Identification, MediaKind, SearchInput } from "./types";
 
 /**
  * Demo mode: a small, hand-written set of searches so GetReel can be explored
  * (and designed) before any API keys are added. Descriptions that resemble one
  * of these examples return its curated answer; anything else explains how to
- * switch on live search.
+ * switch on live search. Every fact here was checked by hand.
  */
 
+/** Hand-written details standing in for TMDB data on the top answer. */
 export type DemoExtras = {
   overview: string;
   cast: string[];
-  runtime: number;
+  /** Film length in minutes (left out for series). */
+  runtime: number | null;
   genres: string[];
+  networks?: string[];
+  seasonCount?: number;
+  episodeCount?: number;
+  endYear?: number;
+  ongoing?: boolean;
+  /** ISO 639-1 code of the original language. */
+  language?: string;
+  /** ISO 3166-1 codes of the countries of origin. */
+  countries?: string[];
+  episode?: { airDate?: string; overview?: string };
 };
 
 type DemoCase = {
@@ -27,27 +39,64 @@ type DemoCase = {
   extras: Record<string, DemoExtras>;
 };
 
-function c(
+type Extra = { originalTitle?: string; season?: number; episode?: number; episodeTitle?: string };
+
+function film(
   title: string,
   year: number,
-  director: string,
+  director: string | null,
   confidence: number,
   why: string,
   matched: string[],
   unmatched: string[],
   scene: string | null,
   query: string,
+  extra: Extra = {},
 ): RawCandidate {
   return {
+    kind: "movie",
     title,
     year,
-    original_title: null,
-    director,
+    original_title: extra.originalTitle ?? null,
+    made_by: director,
     confidence,
     why,
     matched_clues: matched,
     unmatched_clues: unmatched,
     scene,
+    season: null,
+    episode: null,
+    episode_title: null,
+    clip_search_query: query,
+  };
+}
+
+function series(
+  title: string,
+  firstAired: number,
+  creators: string | null,
+  confidence: number,
+  why: string,
+  matched: string[],
+  unmatched: string[],
+  scene: string | null,
+  query: string,
+  extra: Extra = {},
+): RawCandidate {
+  return {
+    kind: "tv",
+    title,
+    year: firstAired,
+    original_title: extra.originalTitle ?? null,
+    made_by: creators,
+    confidence,
+    why,
+    matched_clues: matched,
+    unmatched_clues: unmatched,
+    scene,
+    season: extra.season ?? null,
+    episode: extra.episode ?? null,
+    episode_title: extra.episodeTitle ?? null,
     clip_search_query: query,
   };
 }
@@ -60,7 +109,7 @@ export const DEMO_CASES: DemoCase[] = [
     interpretation: "A film where a man stranded alone on a desert island befriends a volleyball.",
     followUpQuestion: null,
     candidates: [
-      c(
+      film(
         "Cast Away",
         2000,
         "Robert Zemeckis",
@@ -71,7 +120,7 @@ export const DEMO_CASES: DemoCase[] = [
         "Chuck and his volleyball companion, Wilson",
         "Cast Away 2000 Wilson volleyball scene",
       ),
-      c(
+      film(
         "The Martian",
         2015,
         "Ridley Scott",
@@ -82,7 +131,7 @@ export const DEMO_CASES: DemoCase[] = [
         null,
         "The Martian 2015 official trailer",
       ),
-      c(
+      film(
         "Life of Pi",
         2012,
         "Ang Lee",
@@ -93,7 +142,7 @@ export const DEMO_CASES: DemoCase[] = [
         null,
         "Life of Pi 2012 official trailer",
       ),
-      c(
+      film(
         "All Is Lost",
         2013,
         "J.C. Chandor",
@@ -122,7 +171,7 @@ export const DEMO_CASES: DemoCase[] = [
     interpretation: "A film where children on bicycles help a stranded alien return to his home world.",
     followUpQuestion: null,
     candidates: [
-      c(
+      film(
         "E.T. the Extra-Terrestrial",
         1982,
         "Steven Spielberg",
@@ -133,7 +182,7 @@ export const DEMO_CASES: DemoCase[] = [
         "The bikes lifting off and flying across the moon",
         "E.T. the Extra-Terrestrial 1982 bike flying moon scene",
       ),
-      c(
+      film(
         "Super 8",
         2011,
         "J.J. Abrams",
@@ -144,7 +193,7 @@ export const DEMO_CASES: DemoCase[] = [
         null,
         "Super 8 2011 official trailer",
       ),
-      c(
+      film(
         "Flight of the Navigator",
         1986,
         "Randal Kleiser",
@@ -155,7 +204,7 @@ export const DEMO_CASES: DemoCase[] = [
         null,
         "Flight of the Navigator 1986 official trailer",
       ),
-      c(
+      film(
         "Explorers",
         1985,
         "Joe Dante",
@@ -184,7 +233,7 @@ export const DEMO_CASES: DemoCase[] = [
     interpretation: "A film where a hotel lobby boy is swept up in a murder and the theft of a priceless painting.",
     followUpQuestion: null,
     candidates: [
-      c(
+      film(
         "The Grand Budapest Hotel",
         2014,
         "Wes Anderson",
@@ -195,7 +244,7 @@ export const DEMO_CASES: DemoCase[] = [
         "Gustave and Zero stealing 'Boy with Apple'",
         "The Grand Budapest Hotel 2014 Boy with Apple painting scene",
       ),
-      c(
+      film(
         "Knives Out",
         2019,
         "Rian Johnson",
@@ -206,7 +255,7 @@ export const DEMO_CASES: DemoCase[] = [
         null,
         "Knives Out 2019 official trailer",
       ),
-      c(
+      film(
         "The Royal Tenenbaums",
         2001,
         "Wes Anderson",
@@ -235,7 +284,7 @@ export const DEMO_CASES: DemoCase[] = [
     interpretation: "A film about two rival stage magicians in Victorian London obsessed with a teleportation illusion.",
     followUpQuestion: null,
     candidates: [
-      c(
+      film(
         "The Prestige",
         2006,
         "Christopher Nolan",
@@ -246,7 +295,7 @@ export const DEMO_CASES: DemoCase[] = [
         "The Transported Man illusion",
         "The Prestige 2006 Transported Man trick scene",
       ),
-      c(
+      film(
         "The Illusionist",
         2006,
         "Neil Burger",
@@ -257,7 +306,7 @@ export const DEMO_CASES: DemoCase[] = [
         null,
         "The Illusionist 2006 official trailer",
       ),
-      c(
+      film(
         "Now You See Me",
         2013,
         "Louis Leterrier",
@@ -286,7 +335,7 @@ export const DEMO_CASES: DemoCase[] = [
     interpretation: "A film where a team of thieves enters dreams to plant an idea, ending on a spinning top.",
     followUpQuestion: null,
     candidates: [
-      c(
+      film(
         "Inception",
         2010,
         "Christopher Nolan",
@@ -297,7 +346,7 @@ export const DEMO_CASES: DemoCase[] = [
         "The final shot of the spinning top",
         "Inception 2010 ending spinning top scene",
       ),
-      c(
+      film(
         "Paprika",
         2006,
         "Satoshi Kon",
@@ -308,7 +357,7 @@ export const DEMO_CASES: DemoCase[] = [
         null,
         "Paprika 2006 official trailer",
       ),
-      c(
+      film(
         "The Cell",
         2000,
         "Tarsem Singh",
@@ -319,7 +368,7 @@ export const DEMO_CASES: DemoCase[] = [
         null,
         "The Cell 2000 official trailer",
       ),
-      c(
+      film(
         "Dreamscape",
         1984,
         "Joseph Ruben",
@@ -349,7 +398,7 @@ export const DEMO_CASES: DemoCase[] = [
       "A black-and-white film where a husband manipulates his wife into doubting her sanity by secretly dimming the gas lights.",
     followUpQuestion: "Was it the Hollywood version with Ingrid Bergman, or a British film?",
     candidates: [
-      c(
+      film(
         "Gaslight",
         1944,
         "George Cukor",
@@ -360,7 +409,7 @@ export const DEMO_CASES: DemoCase[] = [
         "The gas lights flickering while he denies it",
         "Gaslight 1944 gas lights dimming scene",
       ),
-      c(
+      film(
         "Gaslight",
         1940,
         "Thorold Dickinson",
@@ -371,7 +420,7 @@ export const DEMO_CASES: DemoCase[] = [
         null,
         "Gaslight 1940 Thorold Dickinson",
       ),
-      c(
+      film(
         "Rebecca",
         1940,
         "Alfred Hitchcock",
@@ -382,7 +431,7 @@ export const DEMO_CASES: DemoCase[] = [
         null,
         "Rebecca 1940 Hitchcock trailer",
       ),
-      c(
+      film(
         "Suspicion",
         1941,
         "Alfred Hitchcock",
@@ -403,11 +452,277 @@ export const DEMO_CASES: DemoCase[] = [
         genres: ["Thriller", "Mystery", "Drama"],
       },
     },
+  },  {
+    prompt: "A Korean show where contestants in green tracksuits play deadly children's games for a huge cash prize",
+    label: "Deadly playground games",
+    keywords: { korean: 2, tracksuits: 2, tracksuit: 2, deadly: 1, children: 1, games: 1, contestants: 1, prize: 1, doll: 2, squid: 3 },
+    interpretation: "A Korean series where debt-ridden contestants play lethal versions of children's games for a fortune.",
+    followUpQuestion: null,
+    candidates: [
+      series(
+        "Squid Game",
+        2021,
+        "Hwang Dong-hyuk",
+        97,
+        "That's Squid Game: 456 players in green tracksuits risk their lives in children's games for a 45.6 billion won prize, beginning with a giant doll's game of Red Light, Green Light.",
+        ["Korean show", "green tracksuits", "deadly children's games", "huge cash prize"],
+        [],
+        "The giant doll's game of Red Light, Green Light",
+        "Squid Game Red Light Green Light doll scene",
+        { originalTitle: "오징어 게임", season: 1, episode: 1, episodeTitle: "Red Light, Green Light" },
+      ),
+      series(
+        "Alice in Borderland",
+        2020,
+        "Shinsuke Sato",
+        12,
+        "A Japanese series where people trapped in a deserted Tokyo must survive deadly games, though the games aren't children's games and there's no cash prize.",
+        ["deadly games"],
+        ["Korean", "green tracksuits", "cash prize"],
+        null,
+        "Alice in Borderland official trailer",
+        { originalTitle: "今際の国のアリス" },
+      ),
+      film(
+        "As the Gods Will",
+        2014,
+        "Takashi Miike",
+        6,
+        "A Japanese film where students are forced into lethal versions of children's games, starting with a murderous Daruma doll.",
+        ["deadly children's games", "a giant doll"],
+        ["Korean", "a series", "cash prize"],
+        null,
+        "As the Gods Will 2014 trailer",
+        { originalTitle: "神さまの言うとおり" },
+      ),
+      series(
+        "3%",
+        2016,
+        "Pedro Aguilera",
+        4,
+        "A Brazilian series where young people compete in brutal tests for a place in a privileged society.",
+        ["contestants", "high-stakes competition"],
+        ["Korean", "children's games"],
+        null,
+        "3% Netflix series official trailer",
+      ),
+    ],
+    extras: {
+      "Squid Game|2021": {
+        overview:
+          "Hundreds of cash-strapped players accept a mysterious invitation to compete in children's games for a life-changing prize, only to discover that losing costs them their lives.",
+        cast: ["Lee Jung-jae", "Park Hae-soo", "Wi Ha-joon", "Jung Ho-yeon", "O Yeong-su"],
+        runtime: null,
+        genres: ["Drama", "Thriller"],
+        networks: ["Netflix"],
+        seasonCount: 3,
+        episodeCount: 22,
+        endYear: 2025,
+        language: "ko",
+        countries: ["KR"],
+        episode: {
+          airDate: "2021-09-17",
+          overview:
+            "Deep in debt, Gi-hun accepts a stranger's offer to play games for money and wakes up in a secret compound, where the first game is Red Light, Green Light.",
+        },
+      },
+    },
+  },
+  {
+    prompt: "A Spanish heist series where robbers in red jumpsuits and Salvador Dalí masks take over the Royal Mint",
+    label: "The Dalí masks",
+    keywords: { spanish: 2, spain: 2, heist: 2, robbers: 1, jumpsuits: 2, jumpsuit: 2, red: 1, dali: 3, masks: 1, mask: 1, mint: 3, professor: 2 },
+    interpretation: "A Spanish series about a crew in red jumpsuits and Dalí masks who take over the Royal Mint of Spain.",
+    followUpQuestion: null,
+    candidates: [
+      series(
+        "Money Heist",
+        2017,
+        "Álex Pina",
+        97,
+        "You mean Money Heist (La casa de papel): the Professor's crew, in red jumpsuits and Dalí masks, seize the Royal Mint of Spain to print their own fortune.",
+        ["Spanish series", "red jumpsuits", "Dalí masks", "the Royal Mint"],
+        [],
+        null,
+        "Money Heist La casa de papel official trailer",
+        { originalTitle: "La casa de papel" },
+      ),
+      series(
+        "Berlin",
+        2023,
+        "Álex Pina & Esther Martínez Lobato",
+        9,
+        "The prequel spin-off following Berlin's earlier heist in Paris: the same world and style, but no Royal Mint.",
+        ["Spanish heist series"],
+        ["the Royal Mint", "red jumpsuits"],
+        null,
+        "Berlin Netflix series official trailer",
+      ),
+      series(
+        "Money Heist: Korea – Joint Economic Area",
+        2022,
+        null,
+        6,
+        "The Korean remake keeps the red jumpsuits and the mint, but moves the story to the Korean Peninsula and swaps Dalí for traditional Hahoe masks.",
+        ["red jumpsuits", "a mint heist"],
+        ["Spanish", "Dalí masks"],
+        null,
+        "Money Heist Korea Joint Economic Area official trailer",
+      ),
+      series(
+        "Lupin",
+        2021,
+        "George Kay & François Uzan",
+        3,
+        "A French series about a gentleman thief pulling off elaborate heists in Paris, without a masked crew.",
+        ["heist series"],
+        ["Spanish", "red jumpsuits", "Dalí masks"],
+        null,
+        "Lupin Netflix official trailer",
+      ),
+    ],
+    extras: {
+      "Money Heist|2017": {
+        overview:
+          "A mysterious mastermind known as the Professor recruits eight robbers with nothing to lose for an audacious plan: lock themselves inside the Royal Mint of Spain with hostages and print billions of euros.",
+        cast: ["Úrsula Corberó", "Álvaro Morte", "Itziar Ituño", "Pedro Alonso", "Miguel Herrán"],
+        runtime: null,
+        genres: ["Crime", "Drama"],
+        networks: ["Antena 3", "Netflix"],
+        endYear: 2021,
+        language: "es",
+        countries: ["ES"],
+      },
+    },
+  },
+  {
+    prompt: "A high school chemistry teacher with cancer starts cooking meth in an RV in the desert",
+    label: "The chemistry teacher",
+    keywords: { chemistry: 2, teacher: 1, cancer: 2, meth: 3, methamphetamine: 3, rv: 2, heisenberg: 3, albuquerque: 2 },
+    interpretation: "A series about a dying chemistry teacher who turns to making meth in the New Mexico desert.",
+    followUpQuestion: null,
+    candidates: [
+      series(
+        "Breaking Bad",
+        2008,
+        "Vince Gilligan",
+        98,
+        "That's Breaking Bad: Walter White, a chemistry teacher with terminal cancer, starts cooking meth with his former student Jesse Pinkman in a battered RV outside Albuquerque.",
+        ["chemistry teacher", "cancer", "cooking meth", "an RV in the desert"],
+        [],
+        null,
+        "Breaking Bad official trailer",
+      ),
+      series(
+        "Better Call Saul",
+        2015,
+        "Vince Gilligan & Peter Gould",
+        7,
+        "The prequel set in the same Albuquerque world, but it follows the lawyer Saul Goodman rather than the teacher.",
+        ["the New Mexico desert", "the drug trade"],
+        ["chemistry teacher", "cancer"],
+        null,
+        "Better Call Saul official trailer",
+      ),
+      series(
+        "Weeds",
+        2005,
+        "Jenji Kohan",
+        5,
+        "A suburban mother turns to dealing marijuana to pay the bills: a similar ordinary-person-turned-dealer premise.",
+        ["an ordinary person turns dealer"],
+        ["chemistry teacher", "meth", "an RV"],
+        null,
+        "Weeds Showtime series trailer",
+      ),
+      series(
+        "Ozark",
+        2017,
+        "Bill Dubuque & Mark Williams",
+        4,
+        "A financial adviser launders money for a drug cartel in the Missouri Ozarks: another family man in over his head.",
+        ["a family man turns criminal"],
+        ["chemistry teacher", "meth", "the desert"],
+        null,
+        "Ozark official trailer",
+      ),
+    ],
+    extras: {
+      "Breaking Bad|2008": {
+        overview:
+          "Facing a terminal cancer diagnosis, mild-mannered chemistry teacher Walter White teams up with former student Jesse Pinkman to cook and sell crystal meth, and slowly becomes someone his family would never recognize.",
+        cast: ["Bryan Cranston", "Aaron Paul", "Anna Gunn", "Dean Norris", "Bob Odenkirk"],
+        runtime: null,
+        genres: ["Drama", "Crime"],
+        networks: ["AMC"],
+        seasonCount: 5,
+        episodeCount: 62,
+        endYear: 2013,
+        language: "en",
+        countries: ["US"],
+      },
+    },
+  },
+  {
+    prompt: "The sitcom episode where a guy keeps yelling “pivot!” while carrying a couch up the stairs",
+    label: "“Pivot!”",
+    keywords: { pivot: 3, couch: 2, sofa: 2, stairs: 2, staircase: 1, sitcom: 1, ross: 3 },
+    interpretation: "A sitcom episode where someone shouts “pivot!” while wrestling a couch up a staircase.",
+    followUpQuestion: null,
+    candidates: [
+      series(
+        "Friends",
+        1994,
+        "David Crane & Marta Kauffman",
+        98,
+        "That's Friends: Ross buys a new couch and, with Rachel and Chandler, tries to carry it up the stairs while shouting “Pivot!”",
+        ["a sitcom episode", "yelling “pivot!”", "a couch up the stairs"],
+        [],
+        "Ross yelling “Pivot!” on the stairs",
+        "Friends pivot couch scene The One with the Cop",
+        { season: 5, episode: 16, episodeTitle: "The One with the Cop" },
+      ),
+      series(
+        "Seinfeld",
+        1989,
+        "Larry David & Jerry Seinfeld",
+        2,
+        "Another sitcom about a group of friends in New York, but the “pivot” couch scene isn't from it.",
+        ["a sitcom"],
+        ["yelling “pivot!”", "a couch up the stairs"],
+        null,
+        "Seinfeld trailer",
+      ),
+    ],
+    extras: {
+      "Friends|1994": {
+        overview:
+          "Six friends navigate work, love and life in Manhattan, mostly from the couch of a coffee shop called Central Perk.",
+        cast: ["Jennifer Aniston", "Courteney Cox", "Lisa Kudrow", "Matt LeBlanc", "Matthew Perry", "David Schwimmer"],
+        runtime: null,
+        genres: ["Comedy"],
+        networks: ["NBC"],
+        seasonCount: 10,
+        episodeCount: 236,
+        endYear: 2004,
+        language: "en",
+        countries: ["US"],
+        episode: {
+          overview: "Ross buys a new couch and enlists Rachel and Chandler to help carry it up to his apartment.",
+        },
+      },
+    },
   },
 ];
 
-/** The example prompts, for the home page. */
-export const DEMO_PROMPTS = DEMO_CASES.map((d) => ({ label: d.label, prompt: d.prompt }));
+export type DemoPrompt = { label: string; prompt: string; kind: MediaKind };
+
+/** The example prompts, for the home page. `kind` is the answer's kind. */
+export const DEMO_PROMPTS: DemoPrompt[] = DEMO_CASES.map((d) => ({
+  label: d.label,
+  prompt: d.prompt,
+  kind: d.candidates[0].kind,
+}));
 
 function words(text: string): string[] {
   return normalizeTitle(text).split(" ").filter(Boolean);
@@ -453,7 +768,7 @@ export function demoIdentify(input: SearchInput): Identification {
   );
 }
 
-/** Hand-written plot summary, cast and runtime for a demo film. */
+/** Hand-written details for a demo title's top answer. */
 export function demoExtras(title: string, year: number | null): DemoExtras | null {
   const want = `${normalizeTitle(title)}|${year ?? ""}`;
   for (const demo of DEMO_CASES) {

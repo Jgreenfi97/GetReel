@@ -11,6 +11,7 @@ import { SearchBox } from "@/components/SearchBox";
 import { SiteHeader } from "@/components/SiteHeader";
 import { DEMO_PROMPTS } from "@/lib/demo";
 import { isSearchError, publicMessageFor, type SearchErrorCode } from "@/lib/errors";
+import { nestQuotes } from "@/lib/format";
 import { clientKey } from "@/lib/rate-limit";
 import { enforceRateLimit, runSearch } from "@/lib/search";
 import { parseSearchParams, searchHref } from "@/lib/search-params";
@@ -24,7 +25,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   const input = parseSearchParams(await searchParams);
   const q = input?.description;
   return {
-    title: q ? `“${q.length > 60 ? `${q.slice(0, 57)}…` : q}”` : "Search",
+    title: q ? `“${nestQuotes(q.length > 60 ? `${q.slice(0, 57)}…` : q)}”` : "Search",
     // Every search costs an AI call: keep result pages out of search engines.
     robots: { index: false, follow: true },
   };
@@ -92,7 +93,7 @@ function NoQuery() {
   return (
     <section className={`container ${styles.message}`}>
       <ReelStar className={styles.mark} />
-      <h1 className={styles.title}>What film is on the tip of your tongue?</h1>
+      <h1 className={styles.title}>What film or show is on the tip of your tongue?</h1>
       <p className={styles.text}>Describe anything you remember, and we’ll take it from there.</p>
       <div className={styles.searchWide}>
         <SearchBox />

@@ -9,11 +9,12 @@ import styles from "./SearchBox.module.css";
 
 const PLACEHOLDERS = [
   "The one where a man befriends a volleyball on a desert island…",
+  "The sitcom episode where they carry a couch up the stairs yelling ‘pivot’…",
   "A black-and-white film where a husband makes his wife think she’s going mad…",
-  "Kids on bikes, a lost alien, a full moon…",
+  "A Korean show with deadly children’s games and green tracksuits…",
   "A bus that will explode if it drops below fifty miles an hour…",
+  "A Spanish heist series with red jumpsuits and Dalí masks…",
   "An old musical where a man dances in the rain with an umbrella…",
-  "Two magicians in Victorian London, obsessed with a teleportation trick…",
 ];
 
 type SearchBoxProps = {
@@ -54,7 +55,7 @@ export function SearchBox({ defaultValue = "", variant = "hero", autoFocus = fal
   function validate(event: FormEvent<HTMLFormElement>) {
     if (value.trim().length < LIMITS.minDescription) {
       event.preventDefault();
-      setError("Describe the film in a few words first: a scene, a line, an actor, a feeling.");
+      setError("Describe it in a few words first: a scene, a line, an actor, a feeling.");
       textareaRef.current?.focus();
     }
   }
@@ -72,7 +73,7 @@ export function SearchBox({ defaultValue = "", variant = "hero", autoFocus = fal
   return (
     <Form action="/search" onSubmit={validate} className={`${styles.form} ${hero ? styles.hero : styles.compact}`}>
       <label htmlFor={`${id}-q`} className="visually-hidden">
-        Describe the film you’re trying to remember
+        Describe the film or show you’re trying to remember
       </label>
       <div className={styles.field}>
         <textarea
@@ -82,7 +83,7 @@ export function SearchBox({ defaultValue = "", variant = "hero", autoFocus = fal
           rows={hero ? 3 : 1}
           value={value}
           maxLength={LIMITS.description}
-          placeholder={hero ? PLACEHOLDERS[placeholder] : "Describe another film…"}
+          placeholder={hero ? PLACEHOLDERS[placeholder] : "Describe another film or show…"}
           autoFocus={autoFocus}
           autoComplete="off"
           spellCheck
@@ -97,8 +98,8 @@ export function SearchBox({ defaultValue = "", variant = "hero", autoFocus = fal
           onKeyDown={onKeyDown}
           className={styles.textarea}
         />
-        <button type="submit" className={`btn ${styles.submit}`}>
-          <span>{hero ? "Find my film" : "Search"}</span>
+        <button type="submit" className={`btn ${styles.submit}`} aria-label={hero ? undefined : "Search"}>
+          <span>{hero ? "Search the archive" : "Search"}</span>
           <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">
             <path d="M4 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" strokeWidth="1.6" />
           </svg>

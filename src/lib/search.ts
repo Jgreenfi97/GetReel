@@ -1,22 +1,36 @@
 import "server-only";
 
-import { identifyFilm } from "./claude";
+import { identifyTitles } from "./claude";
 import { getConfig, getFeatures } from "./config";
-import { demoExtras, demoIdentify } from "./demo";
+import { demoExtras, demoIdentify, type DemoExtras } from "./demo";
 import { SearchError } from "./errors";
+import { joinNames } from "./format";
+import { countryNames, foreignLanguageName, langAttribute } from "./locale";
 import { RateLimiter } from "./rate-limit";
 import { youtubeSearchUrl } from "./search-params";
-import { pickVideo } from "./tmdb-core";
-import { findMovieId, getMovieDetails } from "./tmdb";
-import type { Candidate, Features, FilmDetails, FilmMatch, SearchInput, SearchResult, Video } from "./types";
+import { matchEpisode, pickVideo, unverifiedEpisode } from "./tmdb-core";
+import { findTitle, getSeason, getTitleDetails } from "./tmdb";
+import type {
+  Candidate,
+  Episode,
+  EpisodeGuess,
+  Features,
+  SearchInput,
+  SearchResult,
+  TitleDetails,
+  TitleMatch,
+  Video,
+} from "./types";
 import { findSceneClip } from "./youtube";
 
 /**
  * The search pipeline:
  *
- *   1. Identify:  Claude (or demo data) turns the description into ranked guesses.
+ *   1. Identify:  Claude (or demo data) turns the description into ranked
+ *                 guesses: films and TV series, sometimes a specific episode.
  *   2. Enrich:    each guess is matched to TMDB for poster, cast, trailers and
- *                 where-to-watch.
+ *                 where-to-watch; a guessed episode is checked against the
+ *                 series' real episode list.
  *   3. Clip:      the top guess gets a YouTube search for the exact scene; the
  *                 rest fall back to TMDB's official clips and trailers.
  *
@@ -26,20 +40,37 @@ import { findSceneClip } from "./youtube";
 
 type Problems = Set<"tmdb" | "youtube">;
 
-function joinNames(names: string[]): string | null {
-  if (names.length === 0) return null;
-  if (names.length === 1) return names[0];
-  return `${names.slice(0, -1).join(", ")} & ${names[names.length - 1]}`;
-}
-
-async function lookUpDetails(candidate: Candidate, problems: Problems): Promise<FilmDetails | null> {
+async function lookUpDetails(candidate: Candidate, problems: Problems): Promise<TitleDetails | null> {
   try {
-    const id = await findMovieId(candidate.title, candidate.year, candidate.originalTitle);
-    return id ? await getMovieDetails(id) : null;
+    const found = await findTitle(candidate.kind, candidate.title, candidate.year, candidate.originalTitle);
+    return found ? await getTitleDetails(found.kind, found.id) : null;
   } catch (error) {
     console.warn(`[getreel] TMDB lookup failed for "${candidate.title}":`, error);
     problems.add("tmdb");
     return null;
+  }
+}
+
+/**
+ * Confirm a guessed episode when TMDB knows the series; otherwise show the
+ * guess as given. An episode that TMDB's list contradicts is dropped.
+ */
+async function lookUpEpisode(
+  guess: EpisodeGuess | null,
+  details: TitleDetails | null,
+  tmdb: boolean,
+  problems: Problems,
+): Promise<Episode | null> {
+  if (!guess || guess.season === null) return null;
+  if (!tmdb || !details) return unverifiedEpisode(guess);
+  if (details.kind !== "tv") return null;
+  try {
+    const season = await getSeason(details.tmdbId, guess.season);
+    return season ? matchEpisode(season, guess) : null;
+  } catch (error) {
+    console.warn(`[getreel] TMDB season lookup failed for "${details.title}":`, error);
+    problems.add("tmdb");
+    return unverifiedEpisode(guess);
   }
 }
 
@@ -53,45 +84,71 @@ async function lookUpScene(query: string, title: string, problems: Problems): Pr
   }
 }
 
+function withDemoEpisode(episode: Episode | null, extras: DemoExtras | null): Episode | null {
+  if (!episode || !extras?.episode) return episode;
+  return {
+    ...episode,
+    airDate: episode.airDate ?? extras.episode.airDate ?? null,
+    overview: episode.overview ?? extras.episode.overview ?? null,
+  };
+}
+
 async function enrich(
   candidate: Candidate,
   rank: number,
   features: Features,
   demo: boolean,
   problems: Problems,
-): Promise<FilmMatch> {
+): Promise<TitleMatch> {
+  // The scene search only needs the title, so start it alongside the TMDB lookups.
+  const sceneSearch: Promise<Video | null> =
+    rank === 0 && features.youtube ? lookUpScene(candidate.clipQuery, candidate.title, problems) : Promise.resolve(null);
   const details = features.tmdb ? await lookUpDetails(candidate, problems) : null;
+  // TMDB may have found the title in the other catalogue (a "film" that is a series).
+  const kind = details?.kind ?? candidate.kind;
   const title = details?.title ?? candidate.title;
-  const year = details?.year ?? candidate.year;
-
-  let clip: Video | null = null;
-  if (rank === 0 && features.youtube) {
-    clip = await lookUpScene(candidate.clipQuery, title, problems);
-  }
-  const videos = details?.videos ?? [];
-  clip ??= pickVideo(videos, candidate.scene, title);
-
   const extras = demo && !details ? demoExtras(candidate.title, candidate.year) : null;
+
+  const episode =
+    kind === "tv"
+      ? withDemoEpisode(await lookUpEpisode(candidate.episode, details, features.tmdb, problems), extras)
+      : null;
+
+  const videos = details?.videos ?? [];
+  const clip = (await sceneSearch) ?? pickVideo(videos, candidate.scene ?? episode?.title ?? null, title);
+
+  const makers = (kind === "tv" ? details?.creators : details?.directors) ?? [];
 
   return {
     rank,
+    kind,
     tmdbId: details?.tmdbId ?? null,
     title,
-    originalTitle: details?.originalTitle ?? candidate.originalTitle,
-    year,
+    originalTitle: details ? details.originalTitle : candidate.originalTitle,
+    year: details?.year ?? candidate.year,
+    endYear: details ? details.endYear : (extras?.endYear ?? null),
+    ongoing: details ? details.ongoing : (extras?.ongoing ?? false),
     overview: details?.overview ?? extras?.overview ?? null,
     tagline: details?.tagline ?? null,
     poster: details?.poster ?? null,
     backdrop: details?.backdrop ?? null,
     runtime: details?.runtime ?? extras?.runtime ?? null,
     genres: details?.genres.length ? details.genres : (extras?.genres ?? []),
-    director: joinNames(details?.directors.map((d) => d.name) ?? []) ?? candidate.director,
+    // Claude's director/creator only fits if TMDB didn't switch the title's kind.
+    madeBy: joinNames(makers.map((p) => p.name)) ?? (kind === candidate.kind ? candidate.madeBy : null),
     cast: details?.cast.length ? details.cast.slice(0, 4).map((c) => c.name) : (extras?.cast ?? []),
+    networks: details?.networks.length ? details.networks : (extras?.networks ?? []),
+    seasonCount: details?.seasonCount ?? extras?.seasonCount ?? null,
+    episodeCount: details?.episodeCount ?? extras?.episodeCount ?? null,
+    language: foreignLanguageName(details?.originalLanguage ?? extras?.language),
+    languageCode: langAttribute(details?.originalLanguage ?? extras?.language),
+    countries: countryNames(details?.originCountries ?? extras?.countries ?? []),
     confidence: candidate.confidence,
     why: candidate.why,
     matchedClues: candidate.matchedClues,
     unmatchedClues: candidate.unmatchedClues,
     scene: candidate.scene,
+    episode,
     clip,
     extraVideos: videos.filter((v) => v.youtubeId !== clip?.youtubeId).slice(0, 4),
     clipQuery: candidate.clipQuery,
@@ -100,14 +157,16 @@ async function enrich(
   };
 }
 
-/** Collapse guesses that turned out to be the same TMDB film. */
-function dedupe(matches: FilmMatch[]): FilmMatch[] {
-  const seen = new Set<number>();
-  const out: FilmMatch[] = [];
+/** Collapse guesses that turned out to be the same TMDB title. */
+function dedupe(matches: TitleMatch[]): TitleMatch[] {
+  const seen = new Set<string>();
+  const out: TitleMatch[] = [];
   for (const match of matches) {
     if (match.tmdbId !== null) {
-      if (seen.has(match.tmdbId)) continue;
-      seen.add(match.tmdbId);
+      // TMDB ids are only unique within the film or the series catalogue.
+      const key = `${match.kind}:${match.tmdbId}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
     }
     out.push({ ...match, rank: out.length });
   }
@@ -117,7 +176,7 @@ function dedupe(matches: FilmMatch[]): FilmMatch[] {
 export async function runSearch(input: SearchInput): Promise<SearchResult> {
   const features = getFeatures();
   const demo = !features.claude;
-  const identification = demo ? demoIdentify(input) : await identifyFilm(input);
+  const identification = demo ? demoIdentify(input) : await identifyTitles(input);
   if (demo) {
     const delay = getConfig().demoDelayMs ?? 0;
     if (delay > 0) await new Promise((resolve) => setTimeout(resolve, delay));
@@ -134,15 +193,15 @@ export async function runSearch(input: SearchInput): Promise<SearchResult> {
   if (demo) {
     notices.push(
       matches.length > 0
-        ? "Demo mode: these results are hand-picked examples. Add an Anthropic API key to search any film."
-        : "Demo mode: GetReel can only recognise the example searches until an Anthropic API key is added.",
+        ? "Demo mode: these results are hand-picked examples. Add an Anthropic API key to search any film or show."
+        : "Demo mode: GetReel can only recognize the example searches until an Anthropic API key is added.",
     );
   }
   if (!features.tmdb && matches.length > 0) {
     notices.push("Posters, cast and trailers appear once a TMDB key is added.");
   }
   if (problems.has("tmdb")) {
-    notices.push("Some film details couldn't be loaded just now, so a few posters or trailers may be missing.");
+    notices.push("Some details couldn't be loaded just now, so a few posters or trailers may be missing.");
   }
   if (problems.has("youtube")) {
     notices.push("The scene search is unavailable right now, so we're showing official trailers instead.");

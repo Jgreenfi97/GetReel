@@ -4,17 +4,23 @@ import { cacheLife } from "next/cache";
 
 import { getConfig } from "./config";
 import {
-  mapDetails,
+  mapMovieDetails,
+  mapTvDetails,
+  normalizeTvResults,
   pickBestMatch,
   type TmdbMovieDetails,
-  type TmdbSearchMovie,
-  type TmdbSearchResponse,
+  type TmdbMovieSearchResponse,
+  type TmdbSearchResult,
+  type TmdbSeason,
+  type TmdbTvDetails,
+  type TmdbTvSearchResponse,
 } from "./tmdb-core";
-import type { FilmDetails } from "./types";
+import type { MediaKind, TitleDetails } from "./types";
 
 /**
- * The Movie Database (TMDB) client. Accepts either a v4 "API Read Access
- * Token" (sent as a Bearer header) or a v3 "API Key" (sent as a query param).
+ * The Movie Database (TMDB) client, for films and TV series. Accepts either a
+ * v4 "API Read Access Token" (sent as a Bearer header) or a v3 "API Key"
+ * (sent as a query param).
  *
  * This product uses the TMDB API but is not endorsed or certified by TMDB.
  */
@@ -53,19 +59,28 @@ async function tmdbGet<T>(path: string, params: Record<string, string> = {}): Pr
   return (await res.json()) as T;
 }
 
-async function searchMovies(query: string, year?: number | null): Promise<TmdbSearchMovie[]> {
+async function search(kind: MediaKind, query: string, year: number | null): Promise<TmdbSearchResult[]> {
   const params: Record<string, string> = { query, include_adult: "false", language: "en-US", page: "1" };
+  if (kind === "tv") {
+    if (year) params.first_air_date_year = String(year);
+    return normalizeTvResults(await tmdbGet<TmdbTvSearchResponse>("/search/tv", params));
+  }
   if (year) params.primary_release_year = String(year);
-  const data = await tmdbGet<TmdbSearchResponse>("/search/movie", params);
-  return data.results ?? [];
+  return (await tmdbGet<TmdbMovieSearchResponse>("/search/movie", params)).results ?? [];
 }
 
-/** Find TMDB's id for a guessed film. Cached for weeks: titles don't move. */
-export async function findMovieId(
+/**
+ * Find TMDB's id for a guessed title. Searches the guessed catalogue first
+ * (with and without the year, then by original title); if nothing matches,
+ * tries the other catalogue in case the guess mixed up film and series, but
+ * only accepts a result from the same year there. Cached for weeks.
+ */
+export async function findTitle(
+  kind: MediaKind,
   title: string,
   year: number | null,
   originalTitle: string | null,
-): Promise<number | null> {
+): Promise<{ kind: MediaKind; id: number } | null> {
   "use cache";
   cacheLife("weeks");
 
@@ -75,25 +90,52 @@ export async function findMovieId(
   if (originalTitle) attempts.push([originalTitle, null]);
 
   for (const [query, y] of attempts) {
-    const match = pickBestMatch(await searchMovies(query, y), guess);
-    if (match) return match.id;
+    const match = pickBestMatch(await search(kind, query, y), guess);
+    if (match) return { kind, id: match.id };
+  }
+
+  if (year) {
+    const other: MediaKind = kind === "movie" ? "tv" : "movie";
+    const match = pickBestMatch(await search(other, title, null), guess, { requireYear: true });
+    if (match) return { kind: other, id: match.id };
   }
   return null;
 }
 
-/** Full details (credits, videos, ratings, where to watch) for a TMDB id. */
-export async function getMovieDetails(id: number): Promise<FilmDetails | null> {
+/** Full details (credits, videos, ratings, where to watch) for a film or series. */
+export async function getTitleDetails(kind: MediaKind, id: number): Promise<TitleDetails | null> {
   "use cache";
   cacheLife("days");
 
   const { watchRegion } = getConfig();
   try {
+    if (kind === "tv") {
+      const raw = await tmdbGet<TmdbTvDetails>(`/tv/${id}`, {
+        language: "en-US",
+        append_to_response: "aggregate_credits,videos,content_ratings,watch/providers,external_ids",
+        include_video_language: "en,null",
+      });
+      return mapTvDetails(raw, watchRegion);
+    }
     const raw = await tmdbGet<TmdbMovieDetails>(`/movie/${id}`, {
       language: "en-US",
       append_to_response: "credits,videos,release_dates,watch/providers",
       include_video_language: "en,null",
     });
-    return mapDetails(raw, watchRegion);
+    return mapMovieDetails(raw, watchRegion);
+  } catch (error) {
+    if (error instanceof TmdbError && error.status === 404) return null;
+    throw error;
+  }
+}
+
+/** One season's episode list, used to confirm a guessed episode. */
+export async function getSeason(tvId: number, seasonNumber: number): Promise<TmdbSeason | null> {
+  "use cache";
+  cacheLife("weeks");
+
+  try {
+    return await tmdbGet<TmdbSeason>(`/tv/${tvId}/season/${seasonNumber}`, { language: "en-US" });
   } catch (error) {
     if (error instanceof TmdbError && error.status === 404) return null;
     throw error;

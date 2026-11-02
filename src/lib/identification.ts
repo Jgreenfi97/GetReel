@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import type { Candidate, Identification, SearchInput } from "./types";
+import type { Candidate, EpisodeGuess, Identification, MediaKind, SearchInput } from "./types";
 
 /**
  * The JSON shape Claude must answer with, plus the clean-up we apply to it.
@@ -14,24 +14,31 @@ import type { Candidate, Identification, SearchInput } from "./types";
 export const MAX_CANDIDATES = 5;
 
 export const CandidateSchema = z.object({
-  title: z.string().describe("Best-known English-language release title"),
-  year: z.number().nullable().describe("Original release year, e.g. 1999"),
+  kind: z.enum(["movie", "tv"]).describe('"movie" for a film (including TV movies), "tv" for a series or miniseries'),
+  title: z.string().describe("Best-known English-language title"),
+  year: z.number().nullable().describe("Release year for a film, first-air year for a series, e.g. 1999"),
   original_title: z
     .string()
     .nullable()
     .describe("Original-language title if different from title, else null"),
-  director: z.string().nullable().describe("Director's name, or null if unsure"),
+  made_by: z
+    .string()
+    .nullable()
+    .describe("A film's director or a series' creator(s), or null if unsure"),
   confidence: z.number().describe("Integer from 0 to 100"),
   why: z.string().describe("One or two sentences addressed to the person"),
-  matched_clues: z.array(z.string()).describe("Short phrases from their description this film matches"),
-  unmatched_clues: z.array(z.string()).describe("Details from their description this film does not match"),
+  matched_clues: z.array(z.string()).describe("Short phrases from their description this title matches"),
+  unmatched_clues: z.array(z.string()).describe("Details from their description this title does not match"),
   scene: z.string().nullable().describe("The scene they seem to remember, or null"),
+  season: z.number().nullable().describe("Series only: season number of the episode described, or null"),
+  episode: z.number().nullable().describe("Series only: episode number within that season, or null"),
+  episode_title: z.string().nullable().describe("Series only: official title of that episode, or null"),
   clip_search_query: z.string().describe("YouTube search query for the scene or trailer"),
 });
 
 export const IdentificationSchema = z.object({
   interpretation: z.string().describe("One sentence restating what they remember"),
-  candidates: z.array(CandidateSchema).describe(`Up to ${MAX_CANDIDATES} films, most likely first`),
+  candidates: z.array(CandidateSchema).describe(`Up to ${MAX_CANDIDATES} titles, most likely first`),
   follow_up_question: z.string().nullable().describe("Question to separate the top guesses, or null"),
 });
 
@@ -46,7 +53,10 @@ export type RawCandidate = z.infer<typeof CandidateSchema>;
 export function normalizeTitle(title: string): string {
   return title
     .normalize("NFKD")
-    .replace(/\p{M}/gu, "")
+    // Strip Latin accents only (é → e); other scripts' marks, like Japanese
+    // voicing marks, carry meaning. Then recompose (Korean syllables, etc.).
+    .replace(/[\u0300-\u036f]/g, "")
+    .normalize("NFC")
     .toLowerCase()
     .replace(/&/g, " and ")
     .replace(/^(the|a|an)\s+/, "")
@@ -61,10 +71,10 @@ function clampConfidence(value: number): number {
   return Math.max(0, Math.min(100, Math.round(scaled)));
 }
 
-function cleanYear(year: number | null): number | null {
-  if (year === null || !Number.isFinite(year)) return null;
-  const y = Math.round(year);
-  return y >= 1870 && y <= 2100 ? y : null;
+function cleanInt(value: number | null, min: number, max: number): number | null {
+  if (value === null || !Number.isFinite(value)) return null;
+  const n = Math.round(value);
+  return n >= min && n <= max ? n : null;
 }
 
 function cleanList(values: string[], max = 6): string[] {
@@ -82,7 +92,7 @@ function nonEmpty(value: string | null): string | null {
 type RuledOut = { title: string; year: number | null };
 
 /** Parse "Title (Year)" labels back into comparable parts. */
-export function parseFilmLabel(label: string): RuledOut {
+export function parseTitleLabel(label: string): RuledOut {
   const match = label.match(/^(.*?)\s*\((\d{4})\)\s*$/);
   return match
     ? { title: normalizeTitle(match[1]), year: Number(match[2]) }
@@ -90,9 +100,9 @@ export function parseFilmLabel(label: string): RuledOut {
 }
 
 /**
- * A film is ruled out when its title matches a label and the years agree
+ * A title is ruled out when its name matches a label and the years agree
  * (within a year, since festival and wide releases often differ). A label
- * without a year rules out every film with that title.
+ * without a year rules out everything with that name.
  */
 export function isRuledOut(candidate: { title: string; year: number | null }, ruledOut: RuledOut[]): boolean {
   const title = normalizeTitle(candidate.title);
@@ -103,29 +113,42 @@ export function isRuledOut(candidate: { title: string; year: number | null }, ru
   );
 }
 
+/** A usable episode guess needs a season plus an episode number or title. */
+function toEpisodeGuess(kind: MediaKind, raw: RawCandidate): EpisodeGuess | null {
+  if (kind !== "tv") return null;
+  const season = cleanInt(raw.season, 0, 200); // season 0 holds specials
+  const episode = cleanInt(raw.episode, 1, 5000);
+  const title = nonEmpty(raw.episode_title);
+  if (season === null || (episode === null && title === null)) return null;
+  return { season, episode, title };
+}
+
 export function toCandidate(raw: RawCandidate): Candidate {
+  const kind: MediaKind = raw.kind === "tv" ? "tv" : "movie";
   const title = raw.title.trim();
-  const year = cleanYear(raw.year);
+  const year = cleanInt(raw.year, 1870, 2100);
   const clipQuery =
     raw.clip_search_query.trim() || [title, year, "official trailer"].filter(Boolean).join(" ");
   const originalTitle = nonEmpty(raw.original_title);
   return {
+    kind,
     title,
     year,
     originalTitle: originalTitle && normalizeTitle(originalTitle) !== normalizeTitle(title) ? originalTitle : null,
-    director: nonEmpty(raw.director),
+    madeBy: nonEmpty(raw.made_by),
     confidence: clampConfidence(raw.confidence),
     why: raw.why.trim(),
     matchedClues: cleanList(raw.matched_clues),
     unmatchedClues: cleanList(raw.unmatched_clues, 4),
     scene: nonEmpty(raw.scene),
+    episode: toEpisodeGuess(kind, raw),
     clipQuery,
   };
 }
 
-/** Clean up Claude's answer: clamp numbers, drop ruled-out or duplicate films. */
+/** Clean up Claude's answer: clamp numbers, drop ruled-out or duplicate titles. */
 export function toIdentification(raw: RawIdentification, input: SearchInput): Identification {
-  const ruledOut = input.excluded.map(parseFilmLabel);
+  const ruledOut = input.excluded.map(parseTitleLabel);
   const seen = new Set<string>();
   const candidates: Candidate[] = [];
 
@@ -133,7 +156,7 @@ export function toIdentification(raw: RawIdentification, input: SearchInput): Id
     if (!rawCandidate.title?.trim()) continue;
     const candidate = toCandidate(rawCandidate);
     if (isRuledOut(candidate, ruledOut)) continue;
-    const key = `${normalizeTitle(candidate.title)}|${candidate.year ?? ""}`;
+    const key = `${candidate.kind}|${normalizeTitle(candidate.title)}|${candidate.year ?? ""}`;
     if (seen.has(key)) continue;
     seen.add(key);
     candidates.push(candidate);

@@ -1,5 +1,6 @@
 .results {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: clamp(36px, 6vw, 64px);
   padding-top: clamp(28px, 5vw, 48px);
 }
@@ -17,9 +18,11 @@
   margin: 0;
   max-width: 820px;
   font-family: var(--font-serif);
+  font-weight: 400;
   font-size: clamp(26px, 3.6vw, 40px);
   line-height: 1.22;
   color: var(--ink);
+  overflow-wrap: anywhere;
 }
 
 .refinements {
@@ -164,6 +167,78 @@
 
 .facts {
   margin-top: -4px;
+}
+
+/*
+ * Each fact ("3 seasons") is an inline-block: the line breaks between facts,
+ * and a fact only wraps internally if it is wider than the whole line.
+ */
+.facts > span {
+  display: inline-block;
+  max-width: 100%;
+}
+
+.kindBadge {
+  display: inline-block;
+  margin-right: 12px;
+  padding: 2px 9px;
+  border: 1px solid var(--gold-600);
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--gold-800);
+  vertical-align: 1px;
+}
+
+/* A specific episode: its still, title and air date */
+.episode {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 14px;
+  border: 1px solid var(--hairline);
+  border-left: 2px solid var(--gold-600);
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.episodeStill {
+  position: relative;
+  flex: none;
+  width: 168px;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: var(--onyx);
+  box-shadow: 0 0 0 1px var(--hairline-strong);
+}
+
+.episodeImage {
+  object-fit: cover;
+}
+
+.episodeText {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.episodeTitle {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  line-height: 1.25;
+  color: var(--ink);
+}
+
+.episodeOverview {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink-soft);
 }
 
 .why {
@@ -493,7 +568,7 @@
 
 @media (max-width: 960px) {
   .featureFrame {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .media {
@@ -503,7 +578,7 @@
 
 @media (max-width: 700px) {
   .refineRow {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .detailsLink {
@@ -512,6 +587,14 @@
 }
 
 @media (max-width: 480px) {
+  .episode {
+    flex-direction: column;
+  }
+
+  .episodeStill {
+    width: 100%;
+  }
+
   .card {
     grid-template-columns: 96px minmax(0, 1fr);
     gap: 14px;
