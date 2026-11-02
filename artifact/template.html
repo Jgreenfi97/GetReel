@@ -1,0 +1,4001 @@
+<title>GetReel</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Jost:wght@400;500&display=swap">
+<style>
+/*
+ * GetReel: white Persian marble, gilded hairlines, black-tie Hollywood.
+ * Layout: one centred column of marble rooms. An iwan arch frames the search,
+ * a black-marble marquee holds the demo reel, and an answer opens as a
+ * gilt-framed feature presentation with the other contenders below it.
+ */
+:root {
+  --marble-white: url("{{MARBLE_WHITE}}");
+  --marble-white-sm: url("{{MARBLE_WHITE_SM}}");
+  --marble-black: url("{{MARBLE_BLACK}}");
+
+  /* Type: inscriptional capitals, an editorial serif, an Art Deco-era sans */
+  --font-display: "Cinzel", "Trajan Pro", "Times New Roman", serif;
+  --font-serif: "Cormorant Garamond", "Cormorant", Garamond, "Times New Roman", serif;
+  --font-sans: "Jost", "Futura", "Avenir Next", system-ui, sans-serif;
+  --page-max: 1180px;
+
+  /* Light: white Persian marble, ink and gilt */
+  --bg: #f7f4ee;
+  --bg-image: linear-gradient(180deg, rgba(252, 251, 247, 0.55), rgba(252, 251, 247, 0.25)), var(--marble-white);
+  --bg-size: auto, 1600px 1600px;
+  --surface-image: linear-gradient(160deg, rgba(255, 255, 255, 0.92), rgba(250, 247, 240, 0.82)), var(--marble-white);
+  --feature-image: linear-gradient(165deg, rgba(255, 255, 255, 0.9), rgba(250, 246, 238, 0.78)), var(--marble-white);
+  --field-image: linear-gradient(170deg, rgba(255, 255, 255, 0.97), rgba(251, 248, 241, 0.94)), var(--marble-white);
+  --plaque-image: linear-gradient(160deg, rgba(255, 255, 255, 0.7), rgba(243, 238, 228, 0.55)), var(--marble-white-sm);
+  --fg: #1d1a16;
+  --fg-soft: #463f35;
+  --fg-mute: #6b6356;
+  --fg-faint: #9a9182;
+  --label: #8a6a2e;
+  --label-strong: #6e5220;
+  --link: #6e5220;
+  --line: #a7843f;
+  --line-soft: #c2a05a;
+  --hairline: rgba(138, 106, 46, 0.38);
+  --hairline-strong: rgba(138, 106, 46, 0.7);
+  --hairline-faint: rgba(138, 106, 46, 0.18);
+  --chip-bg: rgba(255, 255, 255, 0.55);
+  --chip-bg-hover: rgba(255, 255, 255, 0.95);
+  --panel-bg: rgba(255, 255, 255, 0.62);
+  --panel-ask: linear-gradient(160deg, rgba(248, 241, 222, 0.95), rgba(255, 255, 255, 0.85));
+  --input-bg: rgba(255, 255, 255, 0.9);
+  --tint-bg: rgba(248, 241, 222, 0.75);
+  --episode-bg: rgba(255, 255, 255, 0.6);
+  --inset-glint: rgba(255, 255, 255, 0.9);
+  --numeral-fill: rgba(255, 255, 255, 0.65);
+  --meter-track: #f1e5c4;
+  --meter-edge: rgba(138, 106, 46, 0.22);
+  --meter-fill: linear-gradient(90deg, #6e5220, #8a6a2e 55%, #a7843f);
+  --btn-bg: #0f0e0c;
+  --btn-fg: #f1e5c4;
+  --btn-border: #8a6a2e;
+  --btn-border-hover: #c2a05a;
+  --btn-gap: #0f0e0c;
+  --btn-ring: rgba(214, 185, 120, 0.45);
+  --btn-ring-hover: rgba(214, 185, 120, 0.7);
+  --btn-sheen: rgba(241, 229, 196, 0.22);
+  --btn-lift: 0 10px 24px rgba(15, 14, 12, 0.18);
+  --ghost-bg: rgba(255, 255, 255, 0.4);
+  --ghost-bg-hover: rgba(255, 255, 255, 0.75);
+  --ghost-fg: #1d1a16;
+  --shadow-soft: 0 1px 2px rgba(58, 44, 20, 0.06), 0 10px 30px rgba(58, 44, 20, 0.08);
+  --shadow-lift: 0 2px 4px rgba(58, 44, 20, 0.08), 0 22px 60px rgba(58, 44, 20, 0.16);
+  --shadow-focus: 0 2px 4px rgba(58, 44, 20, 0.08), 0 24px 70px rgba(138, 106, 46, 0.22);
+  --poster-shadow: 0 1px 1px rgba(58, 44, 20, 0.2), 0 14px 34px rgba(58, 44, 20, 0.22);
+  --marquee-shadow: 0 30px 70px rgba(15, 14, 12, 0.35);
+  --danger: #7a2f22;
+  --engraved: #3a342b;
+  --engraved-shadow: 0 1px 0 rgba(255, 255, 255, 0.85), 0 -1px 0 rgba(40, 30, 10, 0.08);
+  --selection: #f1e5c4;
+  --header-bg: linear-gradient(180deg, rgba(252, 251, 247, 0.92), rgba(252, 251, 247, 0.7));
+  --found-bg: linear-gradient(120deg, #f8f1de, rgba(255, 255, 255, 0.85));
+  --kbd-bg: rgba(255, 255, 255, 0.7);
+  --skeleton-a: #f8f1de;
+  --skeleton-b: #f1e5c4;
+  --logo-glow: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.7)) drop-shadow(0 6px 14px rgba(110, 82, 32, 0.18));
+  --reel-glow: rgba(138, 106, 46, 0.3);
+  --ray: #c2a05a;
+  --foil-text: var(--foil);
+  --g1: #7a5a1f;
+  --g2: #c39a49;
+  --g3: #f2dc98;
+  --g4: #b8903e;
+  --g5: #86642a;
+  --tile: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 0L20.69 4.69L27.31 4.69L27.31 11.31L32 16L27.31 20.69L27.31 27.31L20.69 27.31L16 32L11.31 27.31L4.69 27.31L4.69 20.69L0 16L4.69 11.31L4.69 4.69L11.31 4.69Z' fill='none' stroke='%23a7843f' stroke-opacity='.55' stroke-width='.8'/%3E%3C/svg%3E");
+
+  /* Black Nero Marquina panels look the same in both themes */
+  --onyx: #0f0e0c;
+  --onyx-image: linear-gradient(180deg, rgba(15, 14, 12, 0.35), rgba(15, 14, 12, 0.6)), var(--marble-black);
+  --onyx-tile: rgba(15, 14, 12, 0.92);
+  --onyx-tile-hover: rgba(42, 38, 33, 0.95);
+  --onyx-edge: #8a6a2e;
+  --onyx-rule: #a7843f;
+  --on-onyx: #f8f1de;
+  --on-onyx-soft: rgba(241, 229, 196, 0.8);
+  --on-onyx-mute: rgba(241, 229, 196, 0.62);
+  --on-onyx-gold: #e6d3a1;
+  --on-onyx-label: #d6b978;
+  --on-onyx-line: rgba(214, 185, 120, 0.55);
+  --on-onyx-line-faint: rgba(214, 185, 120, 0.22);
+  --on-onyx-tint: rgba(214, 185, 120, 0.15);
+  --bulb: #fff3cf;
+  --bulb-glow: rgba(255, 220, 140, 0.5);
+  --bezel: 0 0 0 1px rgba(214, 185, 120, 0.55), 0 0 0 6px #0b0a09, 0 0 0 7px rgba(214, 185, 120, 0.35), 0 26px 60px rgba(0, 0, 0, 0.45);
+  --onyx-shimmer: rgba(214, 185, 120, 0.1);
+  --screen-glow: rgba(241, 229, 196, 0.13);
+  --screen-dim: linear-gradient(180deg, rgba(10, 9, 8, 0.4), rgba(10, 9, 8, 0.75));
+  --toast-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+  --poster-edge: rgba(79, 58, 18, 0.6);
+  --gb1: #b8913f;
+  --gb2: #f6e6b0;
+  --gb3: #c9a24f;
+  --gold-ring: rgba(255, 250, 235, 0.3);
+  --gold-ring-hover: rgba(255, 250, 235, 0.55);
+  --foil: linear-gradient(120deg, #7a5a1f 0%, #b48c3c 18%, #f0d993 38%, #c69d4b 52%, #8d6a2b 70%, #d9b86b 88%, #a07a33 100%);
+  --foil-soft: linear-gradient(120deg, #b08a43 0%, #e8cf8c 45%, #b8924a 70%, #d7b56c 100%);
+  --foil-bright: linear-gradient(120deg, #b8913f 0%, #f6e6b0 40%, #d4b061 62%, #f2dda0 100%);
+  --tile-band: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 0L20.69 4.69L27.31 4.69L27.31 11.31L32 16L27.31 20.69L27.31 27.31L20.69 27.31L16 32L11.31 27.31L4.69 27.31L4.69 20.69L0 16L4.69 11.31L4.69 4.69L11.31 4.69Z' fill='none' stroke='%23c2a05a' stroke-opacity='.75' stroke-width='1'/%3E%3C/svg%3E");
+}
+
+/* Dark: the same rooms in black marble, lit by the gilt */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    /*DARK-START*/
+    color-scheme: dark;
+    --bg: #11100e;
+    --bg-image: linear-gradient(180deg, rgba(17, 16, 14, 0.5), rgba(17, 16, 14, 0.72)), var(--marble-black);
+    --bg-size: auto, 1200px 1200px;
+    --surface-image: linear-gradient(160deg, rgba(38, 35, 30, 0.92), rgba(23, 21, 19, 0.9)), var(--marble-black);
+    --feature-image: linear-gradient(165deg, rgba(40, 37, 32, 0.92), rgba(21, 20, 17, 0.88)), var(--marble-black);
+    --field-image: linear-gradient(170deg, rgba(33, 31, 27, 0.96), rgba(23, 22, 19, 0.94)), var(--marble-black);
+    --plaque-image: linear-gradient(160deg, rgba(45, 41, 35, 0.66), rgba(15, 14, 12, 0.55)), var(--marble-black);
+    --fg: #f3ead6;
+    --fg-soft: #d9cdb4;
+    --fg-mute: #ab9f88;
+    --fg-faint: #7c7260;
+    --label: #d6b978;
+    --label-strong: #e6d3a1;
+    --link: #e6d3a1;
+    --line: #c2a05a;
+    --line-soft: #a7843f;
+    --hairline: rgba(214, 185, 120, 0.32);
+    --hairline-strong: rgba(214, 185, 120, 0.58);
+    --hairline-faint: rgba(214, 185, 120, 0.15);
+    --chip-bg: rgba(255, 246, 222, 0.05);
+    --chip-bg-hover: rgba(255, 246, 222, 0.12);
+    --panel-bg: rgba(28, 26, 23, 0.8);
+    --panel-ask: linear-gradient(160deg, rgba(64, 52, 30, 0.86), rgba(28, 26, 23, 0.9));
+    --input-bg: rgba(15, 14, 12, 0.6);
+    --tint-bg: rgba(214, 185, 120, 0.1);
+    --episode-bg: rgba(255, 246, 222, 0.04);
+    --inset-glint: rgba(255, 246, 222, 0.05);
+    --numeral-fill: rgba(255, 246, 222, 0.06);
+    --meter-track: rgba(214, 185, 120, 0.2);
+    --meter-edge: rgba(214, 185, 120, 0.2);
+    --meter-fill: linear-gradient(90deg, #a7843f, #d6b978 60%, #f1e5c4);
+    --btn-bg: var(--foil-soft);
+    --btn-fg: #0f0e0c;
+    --btn-border: #c2a05a;
+    --btn-border-hover: #f1e5c4;
+    --btn-gap: transparent;
+    --btn-ring: rgba(255, 250, 235, 0.3);
+    --btn-ring-hover: rgba(255, 250, 235, 0.55);
+    --btn-sheen: rgba(255, 255, 255, 0.35);
+    --btn-lift: 0 10px 24px rgba(0, 0, 0, 0.45);
+    --ghost-bg: rgba(255, 246, 222, 0.04);
+    --ghost-bg-hover: rgba(255, 246, 222, 0.1);
+    --ghost-fg: #f3ead6;
+    --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 30px rgba(0, 0, 0, 0.35);
+    --shadow-lift: 0 2px 4px rgba(0, 0, 0, 0.5), 0 22px 60px rgba(0, 0, 0, 0.55);
+    --shadow-focus: 0 2px 4px rgba(0, 0, 0, 0.5), 0 24px 70px rgba(214, 185, 120, 0.16);
+    --poster-shadow: 0 1px 1px rgba(0, 0, 0, 0.5), 0 14px 34px rgba(0, 0, 0, 0.5);
+    --marquee-shadow: 0 30px 70px rgba(0, 0, 0, 0.6);
+    --danger: #f2a593;
+    --engraved: #efe3c6;
+    --engraved-shadow: 0 1px 0 rgba(0, 0, 0, 0.65), 0 -1px 0 rgba(255, 240, 200, 0.06);
+    --selection: #6e5220;
+    --header-bg: linear-gradient(180deg, rgba(15, 14, 12, 0.9), rgba(15, 14, 12, 0.7));
+    --found-bg: linear-gradient(120deg, rgba(64, 52, 30, 0.86), rgba(28, 26, 23, 0.9));
+    --kbd-bg: rgba(255, 246, 222, 0.06);
+    --skeleton-a: rgba(214, 185, 120, 0.08);
+    --skeleton-b: rgba(214, 185, 120, 0.2);
+    --logo-glow: drop-shadow(0 6px 18px rgba(214, 185, 120, 0.22));
+    --reel-glow: rgba(214, 185, 120, 0.25);
+    --ray: #d6b978;
+    --foil-text: var(--foil-bright);
+    --g1: #a7843f;
+    --g2: #dcbb6d;
+    --g3: #f6e6b0;
+    --g4: #c9a24f;
+    --g5: #b08a43;
+    --tile: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 0L20.69 4.69L27.31 4.69L27.31 11.31L32 16L27.31 20.69L27.31 27.31L20.69 27.31L16 32L11.31 27.31L4.69 27.31L4.69 20.69L0 16L4.69 11.31L4.69 4.69L11.31 4.69Z' fill='none' stroke='%23c2a05a' stroke-opacity='.45' stroke-width='.8'/%3E%3C/svg%3E");
+    /*DARK-END*/
+  }
+}
+
+:root[data-theme="dark"] {
+  {{DARK_TOKENS}}
+}
+
+/* ── Base ─────────────────────────────────────────────────────────────── */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg);
+  background-image: var(--bg-image);
+  background-size: var(--bg-size);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+main {
+  flex: 1;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-weight: 500;
+  line-height: 1.15;
+}
+
+p,
+dl,
+figure {
+  margin: 0;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+::selection {
+  background: var(--selection);
+  color: var(--fg);
+}
+
+:focus-visible {
+  outline: 2px solid var(--line);
+  outline-offset: 3px;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+/* Every band's content sits in a wrap that carries the side gutter. */
+.wrap {
+  width: 100%;
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+@media (min-width: 720px) {
+  .wrap {
+    padding-left: max(36px, env(safe-area-inset-left, 0px));
+    padding-right: max(36px, env(safe-area-inset-right, 0px));
+  }
+}
+
+/* Gilt gradients and tilework drawn from the theme tokens */
+.g1 { stop-color: var(--g1); }
+.g2 { stop-color: var(--g2); }
+.g3 { stop-color: var(--g3); }
+.g4 { stop-color: var(--g4); }
+.g5 { stop-color: var(--g5); }
+.gb1 { stop-color: var(--gb1); }
+.gb2 { stop-color: var(--gb2); }
+.gb3 { stop-color: var(--gb3); }
+.ray-a { stop-color: var(--ray); stop-opacity: 0.55; }
+.ray-b { stop-color: var(--ray); stop-opacity: 0.16; }
+.ray-c { stop-color: var(--ray); stop-opacity: 0; }
+.pt-line { stroke: var(--line); stroke-opacity: 0.55; }
+.numeral-fill { fill: var(--numeral-fill); }
+
+/* ── Type ─────────────────────────────────────────────────────────────── */
+
+.eyebrow {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--label);
+}
+
+.foil {
+  background-image: var(--foil-text);
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.foil-bright {
+  background-image: var(--foil-bright);
+}
+
+.meta {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  color: var(--fg-mute);
+}
+
+.meta-sep::before {
+  content: "◆";
+  font-size: 6px;
+  vertical-align: middle;
+  margin: 0 10px;
+  color: var(--line-soft);
+}
+
+.small-label,
+.try-label {
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--label);
+}
+
+.link,
+.link-button {
+  color: var(--link);
+  text-decoration: underline;
+  text-decoration-color: var(--hairline-strong);
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  transition: color 0.2s ease, text-decoration-color 0.2s ease;
+}
+
+.link-button {
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.link:hover,
+.link-button:hover {
+  color: var(--fg);
+  text-decoration-color: var(--line);
+}
+
+/* ── Buttons and chips ────────────────────────────────────────────────── */
+
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 12px 26px;
+  border: 1px solid var(--btn-border);
+  border-radius: 2px;
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  overflow: hidden;
+  isolation: isolate;
+  box-shadow: inset 0 0 0 3px var(--btn-gap), inset 0 0 0 4px var(--btn-ring);
+  transition: transform 0.2s ease, box-shadow 0.25s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+/* A sweep of light across the button, like a premiere spotlight */
+.btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(110deg, transparent 30%, var(--btn-sheen) 50%, transparent 70%);
+  transform: translateX(-120%);
+  transition: transform 0.7s ease;
+}
+
+.btn:hover::before,
+a:hover .btn::before {
+  transform: translateX(120%);
+}
+
+.btn:hover {
+  border-color: var(--btn-border-hover);
+  box-shadow: inset 0 0 0 3px var(--btn-gap), inset 0 0 0 4px var(--btn-ring-hover), var(--btn-lift);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn-ghost {
+  --btn-bg: var(--ghost-bg);
+  --btn-fg: var(--ghost-fg);
+  --btn-border: var(--hairline-strong);
+  --btn-border-hover: var(--line);
+  --btn-gap: transparent;
+  --btn-ring: transparent;
+  --btn-ring-hover: transparent;
+}
+
+.btn-ghost:hover {
+  --btn-bg: var(--ghost-bg-hover);
+}
+
+/* Always on black marble, so always gold leaf */
+.btn-gold {
+  --btn-bg: var(--foil-soft);
+  --btn-fg: var(--onyx);
+  --btn-border: var(--onyx-edge);
+  --btn-border-hover: var(--gb2);
+  --btn-gap: transparent;
+  --btn-ring: var(--gold-ring);
+  --btn-ring-hover: var(--gold-ring-hover);
+}
+
+.btn-small {
+  min-height: 36px;
+  padding: 8px 16px;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  padding: 6px 14px;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  background: var(--chip-bg);
+  color: var(--fg-soft);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.3;
+  text-align: left;
+  text-decoration: none;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+button.chip {
+  cursor: pointer;
+}
+
+button.chip:hover {
+  background: var(--chip-bg-hover);
+  border-color: var(--line);
+  transform: translateY(-1px);
+}
+
+.chip-match::before,
+.chip-miss::before {
+  font-size: 11px;
+}
+
+.chip-match::before {
+  content: "✦";
+  color: var(--line);
+}
+
+.chip-miss {
+  color: var(--fg-mute);
+  border-style: dashed;
+  background: transparent;
+}
+
+.chip-miss::before {
+  content: "✕";
+  color: var(--fg-faint);
+}
+
+.notice {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 9px 16px;
+  border: 1px solid var(--hairline);
+  border-left: 3px solid var(--line);
+  border-radius: 2px;
+  background: var(--tint-bg);
+  font-size: 14px;
+  color: var(--fg-soft);
+}
+
+.notice::before {
+  content: "✦";
+  color: var(--label);
+  line-height: 1.6;
+}
+
+/* ── Ornaments ────────────────────────────────────────────────────────── */
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 420px;
+  margin-inline: auto;
+}
+
+.divider-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--line-soft) 40%, var(--line));
+}
+
+.divider-line:last-child {
+  background: linear-gradient(270deg, transparent, var(--line-soft) 40%, var(--line));
+}
+
+.divider-diamond {
+  width: 5px;
+  height: 5px;
+  transform: rotate(45deg);
+  border: 1px solid var(--line);
+}
+
+.divider-star {
+  width: 16px;
+  height: 16px;
+  flex: none;
+}
+
+.star-numeral {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  flex: none;
+}
+
+.star-numeral svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.star-numeral-text {
+  position: relative;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 17px;
+  letter-spacing: 0.06em;
+  color: var(--label-strong);
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.42em;
+  line-height: 1;
+  color: inherit;
+  text-decoration: none;
+}
+
+button.logo {
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.logo-mark {
+  width: 1.45em;
+  height: 1.45em;
+  flex: none;
+  transition: transform 1.2s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+button.logo:hover .logo-mark {
+  transform: rotate(45deg);
+}
+
+.logo-word {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding-top: 0.06em;
+  background-position: 0% 50%;
+  transition: background-position 1.2s ease;
+}
+
+button.logo:hover .logo-word {
+  background-position: 100% 50%;
+}
+
+.logo-sm {
+  font-size: 20px;
+}
+
+.logo-md {
+  font-size: 26px;
+}
+
+/* Sized from the arch's width so the lockup always fits between the jambs */
+.logo-lg {
+  font-size: clamp(28px, 11.5cqw, 76px);
+  gap: 0.3em;
+}
+
+.logo-lg .logo-word {
+  letter-spacing: 0.06em;
+  filter: var(--logo-glow);
+}
+
+/* ── Header ───────────────────────────────────────────────────────────── */
+
+.site-header {
+  position: relative;
+  z-index: 10;
+  border-bottom: 1px solid var(--hairline);
+  background: var(--header-bg);
+}
+
+.site-header.is-home {
+  background: transparent;
+  border-bottom-color: transparent;
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 64px;
+}
+
+.est {
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 0.34em;
+  color: var(--label);
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(14px, 3vw, 30px);
+}
+
+.nav-link {
+  padding: 6px 0;
+  border: 0;
+  background: linear-gradient(var(--line), var(--line)) no-repeat 50% 100% / 0 1px;
+  color: var(--fg-soft);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-size 0.3s ease, color 0.2s ease;
+}
+
+.nav-link:hover {
+  color: var(--fg);
+  background-size: 100% 1px;
+}
+
+/* ── Home: the arch, the search and the marquee ───────────────────────── */
+
+.home {
+  display: grid;
+  gap: clamp(56px, 9vw, 110px);
+}
+
+.hero {
+  padding-block: clamp(4px, 2vw, 20px) 0;
+}
+
+/*
+ * The crown SVG is 1000×420 user units across the full width, so its height
+ * is 42% of the width; container query units keep the jambs on that geometry.
+ */
+.arch {
+  position: relative;
+  container-type: inline-size;
+  width: 100%;
+  max-width: 1040px;
+  margin-inline: auto;
+}
+
+.arch-crown {
+  position: absolute;
+  inset: 0 0 auto 0;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+}
+
+.arch::before,
+.arch::after {
+  content: "";
+  position: absolute;
+  top: 41.9cqw;
+  bottom: 0;
+  width: 3.2cqw;
+  pointer-events: none;
+  border-left: 1px solid var(--line);
+  border-right: 1px solid var(--line-soft);
+  background-image: var(--tile);
+  background-size: 100% auto;
+  background-repeat: repeat-y;
+  opacity: 0.85;
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 55%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 0%, #000 55%, transparent 100%);
+}
+
+.arch::before {
+  left: 0.8cqw;
+}
+
+.arch::after {
+  right: 0.8cqw;
+}
+
+.arch-body {
+  position: relative;
+  padding: 13cqw 9cqw 72px;
+}
+
+.hero-inner {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  text-align: center;
+}
+
+.sunburst {
+  position: absolute;
+  left: 50%;
+  top: -16cqw;
+  width: 92cqw;
+  height: 70cqw;
+  max-width: none;
+  transform: translateX(-50%);
+  pointer-events: none;
+  opacity: 0.75;
+  -webkit-mask-image: radial-gradient(ellipse at center, #000 30%, transparent 70%);
+  mask-image: radial-gradient(ellipse at center, #000 30%, transparent 70%);
+  animation: glow 9s ease-in-out infinite alternate;
+}
+
+.hero-logo {
+  position: relative;
+  line-height: 1;
+}
+
+.tagline {
+  position: relative;
+  margin-top: clamp(14px, 2vw, 22px);
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(24px, 3.4vw, 38px);
+  line-height: 1.2;
+  color: var(--fg);
+  text-wrap: balance;
+}
+
+.hero .divider {
+  margin-block: clamp(18px, 2.6vw, 28px);
+}
+
+.intro {
+  position: relative;
+  max-width: 560px;
+  font-family: var(--font-serif);
+  font-size: clamp(18px, 2vw, 21px);
+  line-height: 1.5;
+  color: var(--fg-soft);
+}
+
+.hero-search {
+  position: relative;
+  width: 100%;
+  max-width: 760px;
+  margin-top: clamp(26px, 3.6vw, 40px);
+  text-align: left;
+}
+
+.field {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  padding: 18px 18px 18px 26px;
+  background-color: var(--bg);
+  background-image: var(--field-image);
+  background-size: auto, 900px 900px;
+  border: 1px solid var(--hairline-strong);
+  border-radius: 3px;
+  box-shadow: var(--shadow-lift), inset 0 0 0 5px var(--inset-glint), inset 0 0 0 6px var(--hairline-faint);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.field:focus-within {
+  border-color: var(--line);
+  box-shadow: var(--shadow-focus), inset 0 0 0 5px var(--inset-glint), inset 0 0 0 6px var(--hairline);
+}
+
+.field textarea {
+  flex: 1;
+  min-width: 0;
+  min-height: 104px;
+  padding: 8px 0;
+  resize: none;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--font-serif);
+  font-size: clamp(21px, 2.6vw, 25px);
+  line-height: 1.4;
+}
+
+.field textarea::placeholder {
+  color: var(--fg-mute);
+  font-style: italic;
+  opacity: 1;
+}
+
+.field textarea:focus-visible {
+  outline: none;
+}
+
+.submit {
+  flex: none;
+}
+
+.field-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 12px;
+  padding-inline: 4px;
+}
+
+.hint,
+.count {
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--fg-mute);
+}
+
+.count {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+}
+
+.hint kbd {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  padding: 1px 6px;
+  border: 1px solid var(--hairline);
+  border-bottom-width: 2px;
+  border-radius: 3px;
+  background: var(--kbd-bg);
+}
+
+.field-error {
+  margin-top: 10px;
+  font-size: 14px;
+  color: var(--danger);
+}
+
+.mode-note {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 4px 10px;
+  max-width: 640px;
+  margin-top: 16px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--fg-mute);
+}
+
+.mode-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--fg-faint);
+  box-shadow: 0 0 0 3px var(--hairline-faint);
+  transform: translateY(-1px);
+}
+
+.mode-note.is-live .mode-dot {
+  background: var(--line);
+  box-shadow: 0 0 0 3px var(--hairline-faint), 0 0 10px var(--line-soft);
+}
+
+.try-row {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px 14px;
+  margin-top: 22px;
+}
+
+.try-list,
+.examples,
+.refinements,
+.clues,
+.loader-titles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.try-list,
+.examples,
+.refinements,
+.loader-titles {
+  justify-content: center;
+}
+
+/* A theatre marquee: black marble, a border of bulbs, gilt lettering */
+.marquee-section {
+  max-width: 1120px;
+}
+
+.onyx {
+  position: relative;
+  background-color: var(--onyx);
+  background-image: var(--onyx-image);
+  background-size: auto, 1000px 1000px;
+  color: var(--on-onyx);
+}
+
+.marquee {
+  padding: 16px;
+  border-radius: 6px;
+  box-shadow: 0 0 0 1px var(--onyx-edge), var(--marquee-shadow);
+}
+
+.marquee::before {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border-radius: 4px;
+  pointer-events: none;
+  background:
+    radial-gradient(circle, var(--bulb) 0 1.6px, var(--bulb-glow) 2.4px, transparent 3.4px) 0 0 / 22px 22px repeat-x,
+    radial-gradient(circle, var(--bulb) 0 1.6px, var(--bulb-glow) 2.4px, transparent 3.4px) 0 100% / 22px 22px repeat-x,
+    radial-gradient(circle, var(--bulb) 0 1.6px, var(--bulb-glow) 2.4px, transparent 3.4px) 0 0 / 22px 22px repeat-y,
+    radial-gradient(circle, var(--bulb) 0 1.6px, var(--bulb-glow) 2.4px, transparent 3.4px) 100% 0 / 22px 22px repeat-y;
+  animation: bulbs 2.4s steps(2, jump-none) infinite;
+}
+
+.marquee-inner {
+  position: relative;
+  padding: clamp(28px, 4vw, 48px) clamp(16px, 4vw, 48px);
+  border: 1px solid var(--on-onyx-line);
+  text-align: center;
+}
+
+.marquee-kicker {
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: var(--on-onyx-label);
+}
+
+.marquee-title {
+  margin-top: 10px;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: clamp(28px, 4vw, 44px);
+  color: var(--on-onyx);
+  text-wrap: balance;
+}
+
+.marquee-group {
+  margin-top: clamp(26px, 3.4vw, 40px);
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.36em;
+  text-transform: uppercase;
+  color: var(--on-onyx-label);
+}
+
+.marquee-group::before,
+.marquee-group::after {
+  content: "";
+  display: inline-block;
+  width: 36px;
+  height: 1px;
+  margin: 0 14px;
+  vertical-align: middle;
+  background: var(--on-onyx-line);
+}
+
+/* Column counts the six films and four shows fill exactly, so no tile sits alone */
+.reel-tiles {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1px;
+  margin-top: 16px;
+  background: var(--on-onyx-line-faint);
+  border: 1px solid var(--on-onyx-line-faint);
+}
+
+@media (min-width: 560px) {
+  .reel-tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 900px) {
+  .reel-tiles:not(.reel-tiles-tv) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1080px) {
+  .reel-tiles-tv {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.reel-tile {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  width: 100%;
+  height: 100%;
+  padding: 22px 22px 24px;
+  border: 0;
+  border-radius: 0;
+  background: var(--onyx-tile);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.reel-tile:hover {
+  background: var(--onyx-tile-hover);
+}
+
+.reel-tile:focus-visible {
+  outline-color: var(--on-onyx-label);
+  outline-offset: -5px;
+}
+
+.reel-tile-label {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--on-onyx-gold);
+}
+
+.reel-tile-prompt {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 18px;
+  line-height: 1.4;
+  color: var(--on-onyx-soft);
+}
+
+.how {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  text-align: center;
+  scroll-margin-top: 16px;
+}
+
+.how-title {
+  max-width: 760px;
+  font-family: var(--font-serif);
+  font-size: clamp(32px, 4.4vw, 50px);
+  text-wrap: balance;
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(24px, 4vw, 48px);
+  margin-top: clamp(24px, 4vw, 40px);
+}
+
+.step {
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: 12px;
+}
+
+.step-title {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--fg);
+}
+
+.step-text {
+  max-width: 320px;
+  font-family: var(--font-serif);
+  font-size: 19px;
+  line-height: 1.5;
+  color: var(--fg-soft);
+}
+
+/* ── Searching ────────────────────────────────────────────────────────── */
+
+.loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding-block: clamp(36px, 7vw, 72px) 24px;
+  text-align: center;
+}
+
+.loader-reel {
+  width: 88px;
+  height: 88px;
+  margin-bottom: 8px;
+  filter: drop-shadow(0 10px 24px var(--reel-glow));
+}
+
+.loader-mark {
+  width: 100%;
+  height: 100%;
+  animation: spin 3.2s linear infinite;
+}
+
+.loader-title:focus {
+  outline: none;
+}
+
+.loader-query {
+  max-width: min(640px, 100%);
+  overflow-wrap: anywhere;
+  font-family: var(--font-serif);
+  font-size: clamp(22px, 3vw, 30px);
+  line-height: 1.3;
+  color: var(--fg);
+}
+
+.loader-message {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 20px;
+  color: var(--fg-mute);
+}
+
+.loader-message.is-new {
+  animation: fadeIn 0.6s ease both;
+}
+
+.loader-heard {
+  max-width: 640px;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 19px;
+  color: var(--fg-soft);
+  animation: fadeIn 0.6s ease both;
+}
+
+.loader-considering {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px 14px;
+  max-width: 760px;
+}
+
+.loader-titles li {
+  animation: fadeIn 0.5s ease both;
+}
+
+.loader-stop {
+  margin-top: 4px;
+}
+
+.skeleton {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: 32px;
+  width: 100%;
+  margin-top: 28px;
+}
+
+.skeleton-screen {
+  aspect-ratio: 16 / 9;
+  max-width: 100%;
+  border-radius: 2px;
+  background-color: var(--onyx);
+  background-image: linear-gradient(100deg, transparent 30%, var(--onyx-shimmer) 50%, transparent 70%);
+  background-size: 300% 100%;
+  box-shadow: var(--bezel);
+  animation: shimmer 2.4s ease-in-out infinite;
+}
+
+.skeleton-lines {
+  display: grid;
+  gap: 16px;
+  align-content: center;
+}
+
+.skeleton-lines span {
+  display: block;
+  height: 14px;
+  border-radius: 999px;
+  background: linear-gradient(100deg, var(--skeleton-a) 30%, var(--skeleton-b) 50%, var(--skeleton-a) 70%);
+  background-size: 300% 100%;
+  animation: shimmer 2.4s ease-in-out infinite;
+}
+
+.skeleton-lines span:nth-child(1) { width: 40%; }
+.skeleton-lines span:nth-child(2) { width: 85%; height: 34px; }
+.skeleton-lines span:nth-child(3) { width: 95%; }
+.skeleton-lines span:nth-child(4) { width: 70%; }
+
+/* ── Results ──────────────────────────────────────────────────────────── */
+
+.results {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(36px, 6vw, 64px);
+  padding-top: clamp(28px, 5vw, 48px);
+}
+
+.results-body {
+  display: contents;
+}
+
+.summary {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  text-align: center;
+}
+
+.quote {
+  max-width: 820px;
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(26px, 3.6vw, 40px);
+  line-height: 1.22;
+  color: var(--fg);
+  overflow-wrap: anywhere;
+}
+
+.quote:focus,
+.title:focus,
+.section-title:focus {
+  outline: none;
+}
+
+.refinements {
+  margin-top: 4px;
+}
+
+.remove {
+  font-size: 10px;
+  color: var(--fg-mute);
+}
+
+.excluded-chip s {
+  text-decoration-color: var(--line);
+}
+
+.heard {
+  max-width: 720px;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 19px;
+  color: var(--fg-soft);
+}
+
+.heard-label {
+  margin-right: 8px;
+  font-family: var(--font-display);
+  font-style: normal;
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--label);
+}
+
+.notices {
+  display: grid;
+  gap: 6px;
+  max-width: 860px;
+  margin-top: -16px;
+}
+
+.notice-body {
+  min-width: 0;
+}
+
+.notice-body .link-button {
+  margin-left: 6px;
+}
+
+.feature {
+  scroll-margin-top: 16px;
+}
+
+.feature-frame {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr);
+  gap: clamp(28px, 4vw, 56px);
+  padding: clamp(18px, 3vw, 36px);
+  background-color: var(--bg);
+  background-image: var(--feature-image);
+  background-size: auto, 1100px 1100px;
+  border: 1px solid var(--hairline-strong);
+  border-radius: 3px;
+  box-shadow: var(--shadow-lift);
+  animation: rise 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.feature-frame.is-settled {
+  animation: none;
+}
+
+/* Double gilt rule inside the frame */
+.feature-frame::before {
+  content: "";
+  position: absolute;
+  inset: 7px;
+  border: 1px solid var(--hairline-faint);
+  pointer-events: none;
+}
+
+.media {
+  position: sticky;
+  top: 24px;
+  display: grid;
+  gap: 12px;
+  align-content: start;
+  align-self: start;
+  min-width: 0;
+}
+
+/* The screening room: a 16:9 screen in black marble with a gilt bezel */
+.screen {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  max-width: 100%;
+  padding: 24px;
+  border-radius: 2px;
+  background-color: var(--onyx);
+  background-image: radial-gradient(ellipse at 50% 38%, var(--screen-glow), transparent 62%), var(--screen-dim), var(--marble-black);
+  background-size: auto, auto, 900px 900px;
+  box-shadow: var(--bezel);
+  color: var(--on-onyx-gold);
+  text-align: center;
+  text-decoration: none;
+}
+
+.screen:focus-visible {
+  outline-offset: 10px;
+}
+
+.screen-mark {
+  width: 56px;
+  height: 56px;
+  opacity: 0.9;
+  transition: transform 1.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.screen:hover .screen-mark {
+  transform: rotate(90deg);
+}
+
+.screen-title {
+  font-family: var(--font-display);
+  font-size: clamp(13px, 1.6vw, 16px);
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+}
+
+.screen-text {
+  max-width: 32ch;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 19px;
+  line-height: 1.3;
+  color: var(--on-onyx-soft);
+}
+
+.screen-action {
+  margin-top: 6px;
+}
+
+.clip-note {
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-align: center;
+  color: var(--fg-mute);
+}
+
+.info {
+  display: grid;
+  gap: 16px;
+  align-content: start;
+  min-width: 0;
+}
+
+.title {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: clamp(38px, 5vw, 62px);
+  line-height: 1.02;
+  letter-spacing: -0.005em;
+  color: var(--fg);
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+
+.original-title {
+  margin-top: -8px;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 20px;
+  color: var(--fg-mute);
+}
+
+.facts {
+  margin-top: -4px;
+}
+
+/* Each fact is an inline block: lines break between facts, not inside them. */
+.facts > span {
+  display: inline-block;
+  max-width: 100%;
+}
+
+.kind-badge {
+  margin-right: 12px;
+  padding: 2px 9px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--label-strong);
+  vertical-align: 1px;
+}
+
+.meter {
+  display: grid;
+  gap: 7px;
+  width: 100%;
+}
+
+.meter-text {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.meter-label {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 18px;
+  color: var(--fg-soft);
+}
+
+.meter-value {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg);
+}
+
+.meter-track {
+  position: relative;
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--meter-track);
+  box-shadow: inset 0 0 0 1px var(--meter-edge);
+}
+
+.meter-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--meter-fill);
+  transform-origin: left center;
+  animation: grow 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.meter-sm .meter-label {
+  font-size: 15px;
+}
+
+.meter-sm .meter-value {
+  font-size: 11px;
+}
+
+.meter-sm .meter-track {
+  height: 4px;
+}
+
+.results-body.is-settled .card .meter-fill {
+  animation: none;
+}
+
+.why {
+  font-family: var(--font-serif);
+  font-size: 21px;
+  line-height: 1.45;
+  color: var(--fg);
+}
+
+.episode {
+  display: grid;
+  gap: 4px;
+  padding: 14px 16px;
+  border: 1px solid var(--hairline);
+  border-left: 2px solid var(--line);
+  background: var(--episode-bg);
+}
+
+.episode-title {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  line-height: 1.25;
+  color: var(--fg);
+}
+
+.episode-overview {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--fg-soft);
+}
+
+.credits {
+  display: grid;
+  gap: 8px;
+  padding-top: 14px;
+  border-top: 1px solid var(--hairline-faint);
+}
+
+.credits div {
+  display: grid;
+  grid-template-columns: 100px minmax(0, 1fr);
+  gap: 12px;
+  align-items: baseline;
+}
+
+.credits dt {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--fg-mute);
+}
+
+.credits dd {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 19px;
+  color: var(--fg);
+}
+
+.overview {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--fg-soft);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding-top: 6px;
+}
+
+.found {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  background: var(--found-bg);
+  animation: rise 0.5s ease both;
+}
+
+.found-mark {
+  width: 48px;
+  height: 48px;
+  flex: none;
+  animation: spinOnce 1.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.found-text {
+  min-width: 0;
+}
+
+.found-title {
+  font-family: var(--font-serif);
+  font-size: 23px;
+  color: var(--fg);
+}
+
+.found-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin-top: 4px;
+  font-size: 14px;
+}
+
+.section-head {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  margin-bottom: clamp(20px, 3vw, 32px);
+  text-align: center;
+}
+
+.section-title {
+  font-family: var(--font-serif);
+  font-size: clamp(30px, 3.6vw, 42px);
+  color: var(--fg);
+  text-wrap: balance;
+}
+
+.section-lede {
+  max-width: 620px;
+  font-family: var(--font-serif);
+  font-size: 19px;
+  color: var(--fg-soft);
+}
+
+.follow-up {
+  max-width: 880px;
+}
+
+/* The other contenders read as a ranked list, whatever their number */
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  max-width: 860px;
+  margin-inline: auto;
+}
+
+/* Polished white marble card with a double gilt frame */
+.slab {
+  position: relative;
+  background-color: var(--bg);
+  background-image: var(--surface-image);
+  background-size: auto, 900px 900px;
+  border: 1px solid var(--hairline);
+  border-radius: 4px;
+  box-shadow: var(--shadow-soft);
+}
+
+.slab::after {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border: 1px solid var(--hairline-faint);
+  border-radius: 2px;
+  pointer-events: none;
+}
+
+.card {
+  display: grid;
+  grid-template-columns: 132px minmax(0, 1fr);
+  gap: 18px;
+  padding: 18px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lift);
+}
+
+.card-poster {
+  align-self: start;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.card-body {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  min-width: 0;
+}
+
+.card-title {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 25px;
+  line-height: 1.1;
+  color: var(--fg);
+  overflow-wrap: anywhere;
+}
+
+.card-why {
+  font-family: var(--font-serif);
+  font-size: 17px;
+  line-height: 1.4;
+  color: var(--fg-soft);
+}
+
+.card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+/* A poster in a gilt frame; without artwork, an engraved marble plaque */
+.poster {
+  position: relative;
+  aspect-ratio: 2 / 3;
+  width: 100%;
+  max-width: 100%;
+  border-radius: 2px;
+  background: var(--foil);
+  box-shadow: var(--poster-shadow);
+}
+
+.poster-inner {
+  position: absolute;
+  inset: 5px;
+  overflow: hidden;
+  background: var(--onyx);
+  box-shadow: inset 0 0 0 1px var(--poster-edge);
+}
+
+.plaque {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14%;
+  container-type: inline-size;
+  background-color: var(--bg);
+  background-image: var(--plaque-image);
+  background-size: auto, 700px 700px;
+  text-align: center;
+}
+
+.plaque::before {
+  content: "";
+  position: absolute;
+  inset: 7%;
+  border: 1px solid var(--hairline);
+  outline: 1px solid var(--hairline-faint);
+  outline-offset: 4px;
+}
+
+.plaque-mark {
+  width: 22cqw;
+  height: 22cqw;
+  opacity: 0.9;
+}
+
+.plaque-title {
+  position: relative;
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: clamp(13px, 11cqw, 30px);
+  line-height: 1.1;
+  color: var(--engraved);
+  text-shadow: var(--engraved-shadow);
+  overflow-wrap: anywhere;
+}
+
+.plaque.is-long .plaque-title {
+  font-size: clamp(11px, 9cqw, 24px);
+}
+
+.plaque.is-longer .plaque-title {
+  font-size: clamp(10px, 7.5cqw, 20px);
+}
+
+.plaque.is-longer .plaque-mark {
+  display: none;
+}
+
+.plaque-year {
+  position: relative;
+  font-family: var(--font-display);
+  font-size: clamp(10px, 6.5cqw, 15px);
+  letter-spacing: 0.3em;
+  color: var(--label);
+}
+
+.refine {
+  max-width: 980px;
+}
+
+.refine-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 20px;
+  align-items: stretch;
+}
+
+.keep-looking {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 10px;
+  padding: 20px 26px;
+  border: 1px dashed var(--hairline-strong);
+  border-radius: 3px;
+}
+
+.keep-looking-text {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 19px;
+  color: var(--fg-soft);
+}
+
+.refine-box {
+  display: grid;
+  gap: 12px;
+  padding: 20px 22px 22px;
+  border: 1px solid var(--hairline);
+  border-radius: 3px;
+  background: var(--panel-bg);
+  box-shadow: var(--shadow-soft);
+  text-align: left;
+}
+
+.refine-box.is-question {
+  border-color: var(--line);
+  background: var(--panel-ask);
+  box-shadow: var(--shadow-soft), inset 0 0 0 4px var(--inset-glint), inset 0 0 0 5px var(--hairline-faint);
+}
+
+.refine-label {
+  display: grid;
+  gap: 6px;
+}
+
+.question-text {
+  font-family: var(--font-serif);
+  font-size: clamp(22px, 2.6vw, 27px);
+  line-height: 1.25;
+  color: var(--fg);
+}
+
+.refine-input-row {
+  display: flex;
+  gap: 10px;
+}
+
+.refine-input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 14px;
+  border: 1px solid var(--hairline-strong);
+  border-radius: 2px;
+  background: var(--input-bg);
+  color: var(--fg);
+  font-family: var(--font-serif);
+  font-size: 19px;
+}
+
+.refine-input::placeholder {
+  color: var(--fg-mute);
+  font-style: italic;
+}
+
+.refine-input:focus-visible {
+  outline: 2px solid var(--line);
+  outline-offset: 1px;
+}
+
+.refine-error {
+  font-size: 13px;
+  color: var(--danger);
+}
+
+.stumped {
+  display: grid;
+  justify-items: center;
+  gap: 16px;
+  max-width: 760px;
+  text-align: center;
+}
+
+.stumped-mark {
+  width: 76px;
+  height: 76px;
+}
+
+.stumped-refine {
+  width: 100%;
+}
+
+.stumped-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* ── Toast ────────────────────────────────────────────────────────────── */
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  max-width: calc(100vw - 32px - env(safe-area-inset-left, 0px) - env(safe-area-inset-right, 0px));
+  padding: 12px 14px 12px 20px;
+  transform: translateX(-50%);
+  border: 1px solid var(--onyx-edge);
+  background: var(--onyx);
+  box-shadow: var(--toast-shadow);
+  color: var(--on-onyx);
+  font-size: 14px;
+  animation: toastIn 0.35s ease both;
+}
+
+.toast-text {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.toast-btn {
+  flex: none;
+  padding: 6px 12px;
+  border: 1px solid var(--on-onyx-line);
+  background: transparent;
+  color: var(--on-onyx-gold);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.toast-btn:hover {
+  background: var(--on-onyx-tint);
+}
+
+.toast-btn:focus-visible {
+  outline-color: var(--on-onyx-label);
+}
+
+/* ── Footer: black marble credits, like the end of a reel ─────────────── */
+
+.site-footer {
+  margin-top: clamp(64px, 10vw, 120px);
+  color: var(--on-onyx-soft);
+  font-size: 14px;
+}
+
+.tile-band {
+  height: 18px;
+  border-top: 1px solid var(--onyx-rule);
+  border-bottom: 1px solid var(--onyx-rule);
+  background-image: var(--tile-band);
+  background-size: 16px 16px;
+  background-position: center;
+}
+
+.footer-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: clamp(28px, 5vw, 64px);
+  padding-block: clamp(40px, 6vw, 64px) 32px;
+}
+
+.footer-brand {
+  display: grid;
+  gap: 14px;
+  align-content: start;
+}
+
+.footer-tagline {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 20px;
+  color: var(--on-onyx-soft);
+}
+
+.footer-credits {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+  line-height: 1.6;
+}
+
+.footer-heading {
+  margin-bottom: 4px;
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--on-onyx-label);
+}
+
+.footer-credits a {
+  color: var(--on-onyx-gold);
+  text-decoration: none;
+  border-bottom: 1px solid var(--on-onyx-line);
+}
+
+.footer-credits a:hover {
+  color: var(--on-onyx);
+}
+
+.footer-credits a:focus-visible {
+  outline-color: var(--on-onyx-label);
+}
+
+.footer-base {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding-block: 18px 28px;
+  border-top: 1px solid var(--on-onyx-line-faint);
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--on-onyx-mute);
+}
+
+.fin {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 22px;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: var(--on-onyx-gold);
+}
+
+/* ── Motion ───────────────────────────────────────────────────────────── */
+
+@keyframes glow { from { opacity: 0.55; } to { opacity: 0.85; } }
+@keyframes bulbs { 50% { opacity: 0.72; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } }
+@keyframes shimmer { from { background-position: 100% 0; } to { background-position: 0 0; } }
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } }
+@keyframes spinOnce { from { opacity: 0; transform: rotate(-180deg) scale(0.6); } }
+@keyframes grow { from { transform: scaleX(0); } }
+@keyframes toastIn { from { opacity: 0; transform: translate(-50%, 10px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── Narrow screens ───────────────────────────────────────────────────── */
+
+@media (max-width: 960px) {
+  .feature-frame {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .media {
+    position: static;
+  }
+}
+
+@media (max-width: 820px) {
+  .steps {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 760px) {
+  .skeleton {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .refine-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .footer-inner {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .arch-body {
+    padding: 23cqw 7cqw 56px;
+  }
+
+  .field {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 16px;
+  }
+
+  .submit {
+    width: 100%;
+  }
+
+  .hint {
+    display: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .screen {
+    padding: 18px 14px;
+  }
+
+  .screen-mark {
+    width: 42px;
+    height: 42px;
+  }
+
+  .screen-text {
+    font-size: 17px;
+  }
+
+  .nav-link {
+    letter-spacing: 0.14em;
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    grid-template-columns: 96px minmax(0, 1fr);
+    gap: 14px;
+    padding: 14px;
+  }
+
+  .card-title {
+    font-size: 22px;
+  }
+
+  .credits div {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
+  }
+
+  /* Side by side when both fit, otherwise stacked at full width */
+  .actions .btn {
+    flex: 1 1 auto;
+    white-space: nowrap;
+  }
+
+  .refine-input-row {
+    flex-direction: column;
+  }
+}
+</style>
+
+{{DEFS}}
+
+<header class="site-header is-home" id="site-header">
+  <div class="wrap header-inner">
+    <span class="est" id="header-est">Est. MMXXVI</span>
+    <button type="button" class="logo logo-sm" id="header-logo" aria-label="GetReel, back to search" hidden>
+      <svg class="logo-mark" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><use href="#reel"/></svg>
+      <span class="logo-word foil">GetReel</span>
+    </button>
+    <nav class="nav" aria-label="Main">
+      <button type="button" class="nav-link" id="nav-how">How it works</button>
+      <button type="button" class="btn btn-small" id="nav-new" hidden>New search</button>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="home" id="view-home">
+    <section class="wrap hero" aria-labelledby="home-title">
+      <div class="arch">
+        {{ARCH_CROWN}}
+        <div class="arch-body">
+          <div class="hero-inner">
+            {{SUNBURST}}
+            <h1 class="hero-logo" id="home-title">
+              <span class="logo logo-lg">
+                <svg class="logo-mark" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><use href="#reel"/></svg>
+                <span class="logo-word foil">GetReel</span>
+              </span>
+            </h1>
+            <p class="tagline">For the film on the tip of your tongue.</p>
+            {{DIVIDER}}
+            <p class="intro">Describe a scene, a line, a face, a feeling from any film or TV show, however hazy. GetReel finds it and rolls the clip.</p>
+
+            <form class="hero-search" id="search-form" novalidate>
+              <label for="q" class="visually-hidden">Describe the film or show you’re trying to remember</label>
+              <div class="field">
+                <textarea id="q" name="q" rows="3" maxlength="1200" autocomplete="off" spellcheck="true" aria-describedby="q-hint" placeholder="The one where a man befriends a volleyball on a desert island…"></textarea>
+                <button type="submit" class="btn submit">
+                  <span>Search the archive</span>
+                  <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path d="M4 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+                </button>
+              </div>
+              <div class="field-footer">
+                <p class="hint" id="q-hint"><kbd>Enter</kbd> to search · <kbd>Shift</kbd>+<kbd>Enter</kbd> for a new line</p>
+                <p class="count" id="q-count" aria-live="polite" hidden></p>
+              </div>
+              <p class="field-error" id="q-error" role="alert" hidden></p>
+            </form>
+
+            <p class="mode-note" id="mode-note" hidden>
+              <span class="mode-dot" aria-hidden="true"></span>
+              <span id="mode-text"></span>
+              <button type="button" class="link-button" id="mode-allow" hidden>Allow Claude</button>
+            </p>
+
+            <div class="try-row">
+              <span class="try-label" id="try-label">Or try</span>
+              <ul class="try-list" aria-labelledby="try-label">
+                {{TRY_CHIPS}}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap marquee-section" aria-labelledby="marquee-title">
+      <div class="onyx marquee">
+        <div class="marquee-inner">
+          <p class="marquee-kicker">Now showing</p>
+          <h2 class="marquee-title" id="marquee-title">Tonight’s half-remembered features</h2>
+          <h3 class="marquee-group">On the big screen</h3>
+          <ul class="reel-tiles">
+            {{FILM_TILES}}
+          </ul>
+          <h3 class="marquee-group">On the small screen</h3>
+          <ul class="reel-tiles reel-tiles-tv">
+            {{SHOW_TILES}}
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap how" id="how-it-works" aria-labelledby="how-title">
+      <p class="eyebrow">How it works</p>
+      <h2 class="how-title" id="how-title">From a hazy memory to the opening credits</h2>
+      {{DIVIDER}}
+      <ol class="steps">
+        <li class="step">
+          <span class="star-numeral" aria-hidden="true"><svg viewBox="0 0 100 100" focusable="false"><use href="#numeral-star"/></svg><span class="star-numeral-text">I</span></span>
+          <h3 class="step-title">Describe</h3>
+          <p class="step-text">Tell GetReel whatever you remember from a film or a TV show: a scene, a line of dialogue, a face, the decade, how it made you feel. Hazy or half-wrong is fine.</p>
+        </li>
+        <li class="step">
+          <span class="star-numeral" aria-hidden="true"><svg viewBox="0 0 100 100" focusable="false"><use href="#numeral-star"/></svg><span class="star-numeral-text">II</span></span>
+          <h3 class="step-title">We deduce</h3>
+          <p class="step-text">Claude weighs every clue against a century of film and television from around the world, and ranks the likeliest titles with its reasons.</p>
+        </li>
+        <li class="step">
+          <span class="star-numeral" aria-hidden="true"><svg viewBox="0 0 100 100" focusable="false"><use href="#numeral-star"/></svg><span class="star-numeral-text">III</span></span>
+          <h3 class="step-title">Roll the clip</h3>
+          <p class="step-text">Jump to the scene on YouTube, find the exact episode, see where to stream it, or rule titles out and narrow it down.</p>
+        </li>
+      </ol>
+    </section>
+  </div>
+
+  <section class="wrap loader" id="view-loading" aria-labelledby="loader-title" hidden>
+    <div class="loader-reel" aria-hidden="true">
+      <svg class="loader-mark" viewBox="0 0 100 100" focusable="false"><use href="#reel"/></svg>
+    </div>
+    <p class="eyebrow loader-title" id="loader-title" tabindex="-1">Searching the archive</p>
+    <p class="loader-query" id="loader-query"></p>
+    <p class="loader-message" id="loader-message" aria-hidden="true">Consulting the archive…</p>
+    <p class="loader-heard" id="loader-heard" hidden><span class="heard-label">We heard</span> <span id="loader-heard-text"></span></p>
+    <div class="loader-considering" id="loader-considering" hidden>
+      <span class="try-label" id="considering-label">Considering</span>
+      <ul class="loader-titles" id="loader-titles" aria-labelledby="considering-label"></ul>
+    </div>
+    <button type="button" class="btn btn-ghost btn-small loader-stop" id="loader-stop">Stop searching</button>
+    <div class="skeleton" aria-hidden="true">
+      <div class="skeleton-screen"></div>
+      <div class="skeleton-lines"><span></span><span></span><span></span><span></span></div>
+    </div>
+  </section>
+
+  <div id="view-results" hidden></div>
+</main>
+
+<footer class="site-footer onyx">
+  <div class="tile-band" aria-hidden="true"></div>
+  <div class="wrap footer-inner">
+    <div class="footer-brand">
+      <span class="logo logo-md">
+        <svg class="logo-mark" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><use href="#reel-bright"/></svg>
+        <span class="logo-word foil foil-bright">GetReel</span>
+      </span>
+      <p class="footer-tagline">The archive of half-remembered films and shows.</p>
+    </div>
+    <div class="footer-credits">
+      <p class="footer-heading">Credits</p>
+      <p>Films and shows are identified by <a href="https://www.anthropic.com/claude" target="_blank" rel="noopener noreferrer">Claude</a>, from Anthropic.</p>
+      <p>Scenes open on YouTube and where-to-watch searches on JustWatch, each in a new tab.</p>
+      <p>The ten answers in the demo reel were checked by hand.</p>
+    </div>
+  </div>
+  <div class="wrap footer-base">
+    <span>GetReel · Est. MMXXVI</span>
+    <span class="fin">Fin.</span>
+  </div>
+</footer>
+
+<div class="toast" id="toast" hidden>
+  <span class="toast-text">Ruled out <em id="toast-title"></em></span>
+  <button type="button" class="toast-btn" id="toast-undo">Undo</button>
+</div>
+<p class="visually-hidden" id="announcer" aria-live="polite"></p>
+
+<script>
+(() => {
+  "use strict";
+
+  // The demo reel, exported unchanged from GetReel's src/lib/demo.ts.
+  const DEMO = {{DEMO_JSON}};
+
+  const LIMITS = { description: 1200, clue: 400, clues: 6, excluded: 20, minDescription: 3, candidates: 5 };
+  const SVG_NS = "http://www.w3.org/2000/svg";
+  const $ = (id) => document.getElementById(id);
+
+  // ── What Claude is asked (GetReel's archivist prompt) ─────────────────
+
+  const ARCHIVIST = `You are the archivist behind GetReel, a search engine for films and TV shows people can't quite remember. You know cinema and television from every era and country: Hollywood blockbusters and network sitcoms, prestige dramas and streaming hits, independent and foreign-language films, K-dramas, anime, telenovelas, British, European, Indian, Latin American and other international series, animation, documentaries, miniseries, cult oddities and made-for-TV movies.
+
+People describe a title the way memory works: fuzzy, partial and often partly wrong. They misremember actors, blend two titles together, get the decade wrong, mix up a film with the series it inspired, describe the trailer instead of the story, or recall only one image, line of dialogue or feeling. Your job is to work out what they mean.
+
+How to reason:
+- Weigh distinctive details (an unusual premise, setting, object, line or image) far more heavily than generic ones (a car chase, a love story, "it was sad").
+- Expect small errors. A strong match on the distinctive details beats a perfect match on the generic ones. Note genuine mismatches honestly.
+- Decide whether they mean a film or a series. Words like "show", "series", "episode", "season", "sitcom", "K-drama" or "miniseries" point to TV; "movie" and "film" point to a film. When it is unclear, consider both.
+- Consider the famous answer first, then genuinely different alternatives: lesser-known titles, foreign-language titles, remakes and adaptations (a film and the series based on it are different titles), sequels and spin-offs, and titles commonly confused with the obvious answer.
+- Use any actor they mention, but remember that people often misattribute actors.
+- Treat clues added later as corrections that outrank earlier details.
+- Never suggest a title they have ruled out.
+- Name only real, released titles that you are confident exist. Never invent a title, year, person, episode or episode number. If unsure of the director or creator, use null; if unsure of the year, give your best estimate.
+
+What to return:
+- candidates: up to 5 titles, most likely first. Return fewer when the answer is clear. Return an empty list only if the description is not about a film or TV show at all.
+- kind: "movie" for films (including TV movies), "tv" for series and miniseries.
+- title: the best-known English-language title. original_title: the original-language title when it differs (for example 오징어 게임 or La casa de papel), otherwise null.
+- year: the release year of a film, or the year a series first aired.
+- made_by: a film's director, or a series' creator or creators.
+- confidence: 0 to 100 and calibrated. Reserve 90+ for descriptions containing a detail unique to that title. Confidences need not add up to 100.
+- why: one or two warm, specific sentences addressed to the person (for example "You're likely remembering..."), without spoiling anything they didn't already describe.
+- matched_clues / unmatched_clues: short phrases (2 to 6 words) taken from their description.
+- scene: the specific moment they seem to be describing, in a short phrase, or null if they described the title in general.
+- season, episode, episode_title: for a series, only when the description points to one specific episode and you are sure which one; otherwise null.
+- clip_search_query: a YouTube search that would find that scene: the title, the year (or the episode), a few scene keywords and the word "scene". If no particular scene was described, use the title, year and "official trailer".
+- details: facts for the title's card. Include only what you are sure of, and use null or [] for anything you are not.
+  - overview: one or two spoiler-free sentences about the premise, under 45 words.
+  - cast: up to 4 leading actors (the voice cast for animation).
+  - genres: up to 3, such as "Drama" or "Science Fiction".
+  - runtime_minutes: a film's running time; null for a series.
+  - seasons: how many seasons a series has had; null for a film.
+  - end_year: the year a series ended; null for a film or a series still running.
+  - still_running: true only for a series still in production or on the air.
+  - networks: up to 2 networks or streamers that first aired a series; [] for a film.
+  - language: the original language as an ISO 639-1 code, such as "en" or "ko".
+  - countries: up to 2 countries of origin as ISO 3166-1 alpha-2 codes, such as "US" or "KR".
+  - episode_air_date: the identified episode's first air date as YYYY-MM-DD, or null.
+- interpretation: one sentence restating what they remember, such as "A film where a man stranded on an island befriends a volleyball."
+- follow_up_question: when your top confidence is below 80, the single most useful question to tell your top candidates apart (for example "Was it a film or a TV series?" or "Was it animated?"). Otherwise null.`;
+
+  const ANSWER_FORMAT = `Which film or TV show is this person thinking of?
+
+Reply with only one JSON object and nothing else (no Markdown fence, no commentary), in exactly this shape:
+{
+  "interpretation": string,
+  "candidates": [
+    {
+      "kind": "movie" or "tv",
+      "title": string,
+      "year": number or null,
+      "original_title": string or null,
+      "made_by": string or null,
+      "confidence": number from 0 to 100,
+      "why": string,
+      "matched_clues": [string],
+      "unmatched_clues": [string],
+      "scene": string or null,
+      "season": number or null,
+      "episode": number or null,
+      "episode_title": string or null,
+      "clip_search_query": string,
+      "details": {
+        "overview": string or null,
+        "cast": [string],
+        "genres": [string],
+        "runtime_minutes": number or null,
+        "seasons": number or null,
+        "end_year": number or null,
+        "still_running": boolean,
+        "networks": [string],
+        "language": string or null,
+        "countries": [string],
+        "episode_air_date": string or null
+      }
+    }
+  ],
+  "follow_up_question": string or null
+}`;
+
+  function buildPrompt(input) {
+    const parts = [ARCHIVIST, `<description>\n${input.description}\n</description>`];
+    if (input.clues.length > 0) {
+      parts.push(
+        `<additional_clues note="added later, newest last; these outrank the original description">\n${input.clues
+          .map((c) => `- ${c}`)
+          .join("\n")}\n</additional_clues>`,
+      );
+    }
+    if (input.excluded.length > 0) {
+      parts.push(
+        `<ruled_out note="the person says it is NOT any of these">\n${input.excluded
+          .map((e) => `- ${e}`)
+          .join("\n")}\n</ruled_out>`,
+      );
+    }
+    parts.push(ANSWER_FORMAT);
+    return parts.join("\n\n");
+  }
+
+  // ── DOM helpers ───────────────────────────────────────────────────────
+
+  function h(tag, props, ...kids) {
+    const el = document.createElement(tag);
+    for (const [key, value] of Object.entries(props ?? {})) {
+      if (value === null || value === undefined || value === false) continue;
+      if (key === "class") el.className = value;
+      else if (key === "style") Object.assign(el.style, value);
+      else if (key.startsWith("on") && typeof value === "function") el.addEventListener(key.slice(2), value);
+      else el.setAttribute(key, value === true ? "" : String(value));
+    }
+    for (const kid of kids.flat(Infinity)) {
+      if (kid === null || kid === undefined || kid === false || kid === "") continue;
+      el.append(kid instanceof Node ? kid : String(kid));
+    }
+    return el;
+  }
+
+  function icon(symbol, cls, viewBox = "0 0 100 100") {
+    const svg = document.createElementNS(SVG_NS, "svg");
+    svg.setAttribute("viewBox", viewBox);
+    svg.setAttribute("class", cls);
+    svg.setAttribute("aria-hidden", "true");
+    svg.setAttribute("focusable", "false");
+    const use = document.createElementNS(SVG_NS, "use");
+    use.setAttribute("href", `#${symbol}`);
+    svg.append(use);
+    return svg;
+  }
+
+  function divider() {
+    return h(
+      "div",
+      { class: "divider", "aria-hidden": "true" },
+      h("span", { class: "divider-line" }),
+      h("span", { class: "divider-diamond" }),
+      icon("khatam", "divider-star", "0 0 40 40"),
+      h("span", { class: "divider-diamond" }),
+      h("span", { class: "divider-line" }),
+    );
+  }
+
+  const newTab = { target: "_blank", rel: "noopener noreferrer" };
+  const smooth = () => (matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth");
+
+  function announce(message) {
+    const el = $("announcer");
+    el.textContent = "";
+    requestAnimationFrame(() => {
+      el.textContent = message;
+    });
+  }
+
+  // ── Formatting ────────────────────────────────────────────────────────
+
+  /** Swap double quotes inside a quotation for single ones: “a ‘b’ c”. */
+  function nestQuotes(text) {
+    return text.replace(/[“”"]/g, (q, offset) => {
+      if (q === "“") return "‘";
+      if (q === "”") return "’";
+      return offset === 0 || /[\s([]/.test(text[offset - 1]) ? "‘" : "’";
+    });
+  }
+
+  const quoted = (text) => `“${nestQuotes(text)}”`;
+  const kindLabel = (kind) => (kind === "tv" ? "TV series" : "Film");
+  const titleLabel = (title, year) => (year ? `${title} (${year})` : title);
+  const truncate = (text, max) => (text.length > max ? `${text.slice(0, max - 1)}…` : text);
+  const tidy = (text, max) => text.replace(/\s+/g, " ").trim().slice(0, max);
+  const plural = (n, one, many = `${one}s`) => `${n.toLocaleString("en-US")} ${n === 1 ? one : many}`;
+  const youtubeSearchUrl = (query) => `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
+  const justWatchUrl = (title) => `https://www.justwatch.com/us/search?q=${encodeURIComponent(title)}`;
+
+  function yearsLabel(t) {
+    if (t.year === null) return null;
+    if (t.kind !== "tv") return String(t.year);
+    if (t.ongoing) return `${t.year}–`;
+    if (t.endYear !== null && t.endYear !== t.year) return `${t.year}–${t.endYear}`;
+    return String(t.year);
+  }
+
+  function episodeLabel(e) {
+    const season = e.season === 0 ? "Specials" : `Season ${e.season}`;
+    return e.episode !== null ? `${season} · Episode ${e.episode}` : season;
+  }
+
+  function formatDate(date) {
+    if (!date) return null;
+    const d = new Date(`${date.slice(0, 10)}T00:00:00Z`);
+    if (Number.isNaN(d.getTime())) return null;
+    return d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" });
+  }
+
+  function displayNames(type) {
+    try {
+      return new Intl.DisplayNames(["en"], { type });
+    } catch {
+      return null;
+    }
+  }
+
+  const LANGUAGES = displayNames("language");
+  const REGIONS = displayNames("region");
+  const LANGUAGE_QUIRKS = { cn: "Cantonese", xx: null };
+
+  function languageName(code) {
+    if (!code) return null;
+    const lower = code.toLowerCase();
+    if (Object.hasOwn(LANGUAGE_QUIRKS, lower)) return LANGUAGE_QUIRKS[lower];
+    try {
+      const name = LANGUAGES?.of(lower);
+      return name && name.toLowerCase() !== lower ? name : null;
+    } catch {
+      return null;
+    }
+  }
+
+  const foreignLanguageName = (code) => (code && code.toLowerCase() !== "en" ? languageName(code) : null);
+
+  function langAttribute(code) {
+    if (!code) return null;
+    const lower = code.toLowerCase();
+    const fixed = lower === "cn" ? "yue" : lower === "xx" ? null : lower;
+    return fixed && /^[a-z]{2,3}$/.test(fixed) ? fixed : null;
+  }
+
+  function countryNames(codes) {
+    const names = [];
+    for (const code of codes) {
+      try {
+        const name = REGIONS?.of(code.toUpperCase());
+        if (name && name !== code.toUpperCase() && !names.includes(name)) names.push(name);
+      } catch {
+        // Ignore malformed codes.
+      }
+    }
+    return names;
+  }
+
+  // ── Reading an answer (ported from src/lib/identification.ts) ─────────
+
+  /** Lower case, accents and punctuation removed, leading article dropped; any script kept. */
+  function normalizeTitle(title) {
+    return title
+      .normalize("NFKD")
+      .replace(/[̀-ͯ]/g, "")
+      .normalize("NFC")
+      .toLowerCase()
+      .replace(/&/g, " and ")
+      .replace(/^(the|a|an)\s+/, "")
+      .replace(/[^\p{L}\p{N}]+/gu, " ")
+      .trim();
+  }
+
+  const text = (v) => (typeof v === "string" && v.trim() ? v.trim() : null);
+  const texts = (v, max) => (Array.isArray(v) ? v.map(text).filter(Boolean).slice(0, max) : []);
+
+  function whole(v, min, max) {
+    const n = typeof v === "number" ? v : typeof v === "string" && v.trim() ? Number(v) : NaN;
+    if (!Number.isFinite(n)) return null;
+    const r = Math.round(n);
+    return r >= min && r <= max ? r : null;
+  }
+
+  function confidenceOf(v) {
+    const n = typeof v === "number" ? v : Number(v);
+    if (!Number.isFinite(n)) return 0;
+    const scaled = n > 0 && n <= 1 ? n * 100 : n; // accept 0–1 as well as 0–100
+    return Math.max(0, Math.min(100, Math.round(scaled)));
+  }
+
+  function parseTitleLabel(label) {
+    const match = label.match(/^(.*?)\s*\((\d{4})\)\s*$/);
+    return match ? { title: normalizeTitle(match[1]), year: Number(match[2]) } : { title: normalizeTitle(label), year: null };
+  }
+
+  /** Ruled out when the name matches and the years agree within one; a label without a year rules out the name. */
+  function isRuledOut(candidate, ruledOut) {
+    const title = normalizeTitle(candidate.title);
+    return ruledOut.some(
+      (r) => r.title === title && (r.year === null || candidate.year === null || Math.abs(r.year - candidate.year) <= 1),
+    );
+  }
+
+  function episodeGuess(kind, raw) {
+    if (kind !== "tv") return null;
+    const season = whole(raw.season, 0, 200);
+    const episode = whole(raw.episode, 1, 5000);
+    const title = text(raw.episode_title);
+    if (season === null || (episode === null && title === null)) return null;
+    return { season, episode, title };
+  }
+
+  function toCandidate(raw) {
+    const kind = raw.kind === "tv" ? "tv" : "movie";
+    const title = text(raw.title);
+    const year = whole(raw.year, 1870, 2100);
+    const originalTitle = text(raw.original_title);
+    return {
+      kind,
+      title,
+      year,
+      originalTitle: originalTitle && normalizeTitle(originalTitle) !== normalizeTitle(title) ? originalTitle : null,
+      madeBy: text(raw.made_by),
+      confidence: confidenceOf(raw.confidence),
+      why: text(raw.why),
+      matchedClues: texts(raw.matched_clues, 6),
+      unmatchedClues: texts(raw.unmatched_clues, 4),
+      scene: text(raw.scene),
+      episode: episodeGuess(kind, raw),
+      clipQuery: text(raw.clip_search_query) ?? [title, year, "official trailer"].filter(Boolean).join(" "),
+      details: raw.details && typeof raw.details === "object" ? raw.details : null,
+    };
+  }
+
+  /** Clamp numbers and drop ruled-out or duplicate titles. */
+  function toIdentification(raw, input) {
+    const ruledOut = input.excluded.map(parseTitleLabel);
+    const seen = new Set();
+    const candidates = [];
+    for (const item of Array.isArray(raw.candidates) ? raw.candidates : []) {
+      if (!item || typeof item !== "object" || !text(item.title)) continue;
+      const candidate = toCandidate(item);
+      if (isRuledOut(candidate, ruledOut)) continue;
+      const key = `${candidate.kind}|${normalizeTitle(candidate.title)}|${candidate.year ?? ""}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      candidates.push(candidate);
+      if (candidates.length >= LIMITS.candidates) break;
+    }
+    return {
+      interpretation: text(raw.interpretation) ?? input.description,
+      candidates,
+      followUpQuestion: text(raw.follow_up_question),
+    };
+  }
+
+  function liveDetails(d, kind) {
+    if (!d || typeof d !== "object") return null;
+    const tv = kind === "tv";
+    const language = text(d.language);
+    const airDate = text(d.episode_air_date);
+    return {
+      overview: text(d.overview),
+      cast: texts(d.cast, 4),
+      genres: texts(d.genres, 3),
+      runtime: tv ? null : whole(d.runtime_minutes, 1, 1000),
+      seasonCount: tv ? whole(d.seasons, 1, 200) : null,
+      endYear: tv ? whole(d.end_year, 1870, 2100) : null,
+      ongoing: tv && d.still_running === true,
+      networks: tv ? texts(d.networks, 2) : [],
+      language: language && /^[a-z]{2,3}$/i.test(language) ? language.toLowerCase() : null,
+      countries: texts(d.countries, 2).filter((c) => /^[a-z]{2}$/i.test(c)),
+      episodeAirDate: airDate && /^\d{4}-\d{2}-\d{2}$/.test(airDate) ? airDate : null,
+      episodeOverview: null,
+    };
+  }
+
+  function demoDetails(title, year) {
+    const want = `${normalizeTitle(title)}|${year ?? ""}`;
+    for (const demo of DEMO) {
+      for (const [key, x] of Object.entries(demo.extras)) {
+        const [t, y] = key.split("|");
+        if (`${normalizeTitle(t)}|${y}` !== want) continue;
+        return {
+          overview: x.overview ?? null,
+          cast: x.cast ?? [],
+          genres: x.genres ?? [],
+          runtime: x.runtime ?? null,
+          seasonCount: x.seasonCount ?? null,
+          endYear: x.endYear ?? null,
+          ongoing: x.ongoing ?? false,
+          networks: x.networks ?? [],
+          language: x.language ?? null,
+          countries: x.countries ?? [],
+          episodeAirDate: x.episode?.airDate ?? null,
+          episodeOverview: x.episode?.overview ?? null,
+        };
+      }
+    }
+    return null;
+  }
+
+  function toMatch(c, rank, d) {
+    const tv = c.kind === "tv";
+    return {
+      rank,
+      kind: c.kind,
+      title: c.title,
+      year: c.year,
+      endYear: tv ? (d?.endYear ?? null) : null,
+      ongoing: tv ? Boolean(d?.ongoing) : false,
+      originalTitle: c.originalTitle,
+      madeBy: c.madeBy,
+      confidence: c.confidence,
+      why: c.why,
+      matchedClues: c.matchedClues,
+      unmatchedClues: c.unmatchedClues,
+      scene: c.scene,
+      episode: c.episode
+        ? { ...c.episode, airDate: d?.episodeAirDate ?? null, overview: d?.episodeOverview ?? null }
+        : null,
+      clipQuery: c.clipQuery,
+      overview: d?.overview ?? null,
+      cast: d?.cast ?? [],
+      genres: d?.genres ?? [],
+      runtime: tv ? null : (d?.runtime ?? null),
+      seasonCount: tv ? (d?.seasonCount ?? null) : null,
+      networks: tv ? (d?.networks ?? []) : [],
+      language: foreignLanguageName(d?.language ?? null),
+      languageCode: langAttribute(d?.language ?? null),
+      countries: countryNames(d?.countries ?? []),
+    };
+  }
+
+  // ── The demo reel ─────────────────────────────────────────────────────
+
+  const exactDemo = (description) => DEMO.find((d) => d.prompt.toLowerCase() === description.toLowerCase()) ?? null;
+
+  /** An exact example, or the case whose keywords score at least 3. */
+  function findDemoCase(input) {
+    const exact = exactDemo(input.description);
+    if (exact) return exact;
+    const words = new Set(normalizeTitle([input.description, ...input.clues].join(" ")).split(" ").filter(Boolean));
+    let best = null;
+    for (const demo of DEMO) {
+      let score = 0;
+      for (const [word, weight] of Object.entries(demo.keywords)) if (words.has(word)) score += weight;
+      if (!best || score > best.score) best = { demo, score };
+    }
+    return best && best.score >= 3 ? best.demo : null;
+  }
+
+  function demoResult(demo, input, notices) {
+    if (!demo) {
+      return { input, mode: "demo", interpretation: input.description, followUpQuestion: null, matches: [], notices };
+    }
+    const ident = toIdentification(
+      { interpretation: demo.interpretation, candidates: demo.candidates, follow_up_question: demo.followUpQuestion },
+      input,
+    );
+    return {
+      input,
+      mode: "demo",
+      interpretation: ident.interpretation,
+      followUpQuestion: ident.followUpQuestion,
+      matches: ident.candidates.map((c, rank) => toMatch(c, rank, demoDetails(c.title, c.year))),
+      notices,
+    };
+  }
+
+  function liveResult(raw, input) {
+    if (!raw || typeof raw !== "object" || !Array.isArray(raw.candidates)) throw { code: "invalid_json" };
+    const ident = toIdentification(raw, input);
+    return {
+      input,
+      mode: "live",
+      interpretation: ident.interpretation,
+      followUpQuestion: ident.followUpQuestion,
+      matches: ident.candidates.map((c, rank) => toMatch(c, rank, liveDetails(c.details, c.kind))),
+      notices: [],
+    };
+  }
+
+  // ── Claude, through the viewer's own account ──────────────────────────
+
+  function claudeUse(name) {
+    try {
+      if (!window.claude || typeof window.claude.use !== "function") return Promise.resolve(null);
+      return Promise.resolve(window.claude.use(name)).catch(() => null);
+    } catch {
+      return Promise.resolve(null);
+    }
+  }
+
+  /** undefined until the viewer answers, then the sample function or null. */
+  let sampleFn;
+  /** The error code that switched live search off for this view, if any. */
+  let liveBlocked = null;
+  let liveUsed = false;
+  const samplePromise = claudeUse("sample").then((fn) => {
+    sampleFn = typeof fn === "function" ? fn : null;
+    updateModeNote();
+    if (current && view === "results") renderBody();
+    return sampleFn;
+  });
+
+  const canLive = () => typeof sampleFn === "function" && !liveBlocked;
+  /** Refining needs Claude; while the answer is pending, assume it will come. */
+  const canRefine = () => sampleFn !== null && !liveBlocked;
+
+  const SWITCH_OFF = new Set(["not_granted", "sampling_disabled", "not_declared", "capability_disabled", "capability_removed"]);
+
+  function parseLooseJson(reply) {
+    const fence = /```(?:json)?\s*([\s\S]*?)```/.exec(reply);
+    const tries = [reply, fence?.[1], reply.slice(reply.indexOf("{"), reply.lastIndexOf("}") + 1)];
+    for (const attempt of tries) {
+      if (!attempt) continue;
+      try {
+        return JSON.parse(attempt);
+      } catch {
+        // Try the next reading.
+      }
+    }
+    throw { code: "invalid_json", text: reply };
+  }
+
+  async function askClaude(sample, prompt, options) {
+    if (typeof sample.json === "function") return sample.json(prompt, options);
+    const { text: reply } = await sample(prompt, options);
+    return parseLooseJson(reply);
+  }
+
+  function pause(ms, signal) {
+    return new Promise((resolve, reject) => {
+      if (signal.aborted) {
+        reject({ code: "cancelled" });
+        return;
+      }
+      const timer = setTimeout(resolve, ms);
+      signal.addEventListener(
+        "abort",
+        () => {
+          clearTimeout(timer);
+          reject({ code: "cancelled" });
+        },
+        { once: true },
+      );
+    });
+  }
+
+  function demoOnlyNotice() {
+    return { text: "Live search isn’t available in this view, so GetReel searched its demo reel of ten titles." };
+  }
+
+  function exampleNotice() {
+    if (canLive()) return { text: "This answer comes from GetReel’s demo reel. Describe anything else and Claude will search for it." };
+    if (sampleFn === undefined) return { text: "This answer comes from GetReel’s demo reel." };
+    return demoOnlyNotice();
+  }
+
+  function switchedOffNotice(code) {
+    return code === "not_granted"
+      ? { text: "Claude wasn’t allowed for this page, so GetReel searched its demo reel instead.", allow: true }
+      : { text: "Claude isn’t available for this account here, so GetReel searched its demo reel instead." };
+  }
+
+  async function identify(input, signal, onText) {
+    const plain = input.clues.length === 0 && input.excluded.length === 0;
+    const example = plain ? exactDemo(input.description) : null;
+    if (example) {
+      await pause(1100, signal); // a beat for the projector, as in the full app
+      return demoResult(example, input, [exampleNotice()]);
+    }
+
+    const sample = await samplePromise;
+    if (signal.aborted) throw { code: "cancelled" };
+    if (sample && !liveBlocked) {
+      try {
+        const raw = await askClaude(sample, buildPrompt(input), { modelTier: "default", signal, onText });
+        liveUsed = true;
+        updateModeNote();
+        return liveResult(raw, input);
+      } catch (error) {
+        const code = error && typeof error.code === "string" ? error.code : "upstream_error";
+        if (!SWITCH_OFF.has(code)) throw { code, text: error?.text };
+        liveBlocked = code;
+        updateModeNote();
+        return demoResult(findDemoCase(input), input, [switchedOffNotice(code)]);
+      }
+    }
+
+    await pause(1100, signal);
+    return demoResult(findDemoCase(input), input, [demoOnlyNotice()]);
+  }
+
+  // ── Views ─────────────────────────────────────────────────────────────
+
+  let view = "home";
+  let current = null; // { result, rejected, selected, found, featureRank, lastRejected }
+  let searchCtl = null;
+  let loading = null;
+  const q = $("q");
+
+  function showView(name) {
+    view = name;
+    const home = name === "home";
+    $("view-home").hidden = !home;
+    $("view-loading").hidden = name !== "loading";
+    $("view-results").hidden = name !== "results";
+    $("site-header").classList.toggle("is-home", home);
+    $("header-est").hidden = !home;
+    $("header-logo").hidden = home;
+    $("nav-how").hidden = !home;
+    $("nav-new").hidden = home;
+  }
+
+  async function runSearch(input) {
+    searchCtl?.abort();
+    const ctl = new AbortController();
+    searchCtl = ctl;
+    hideToast();
+    showLoading(input);
+    try {
+      const result = await identify(input, ctl.signal, onStream);
+      if (searchCtl !== ctl) return;
+      showResults(result);
+    } catch (error) {
+      if (searchCtl !== ctl || error?.code === "cancelled") return;
+      showError(input, error);
+    } finally {
+      if (searchCtl === ctl) {
+        searchCtl = null;
+        loading = null;
+        stopMessages();
+      }
+    }
+  }
+
+  /** Stop the search in flight and go back to whatever was on screen before. */
+  function stopSearch() {
+    const ctl = searchCtl;
+    searchCtl = null;
+    loading = null;
+    stopMessages();
+    ctl?.abort();
+    showView(current ? "results" : "home");
+    announce("Search stopped.");
+  }
+
+  function goHome({ clear = false } = {}) {
+    if (searchCtl) {
+      const ctl = searchCtl;
+      searchCtl = null;
+      loading = null;
+      stopMessages();
+      ctl.abort();
+    }
+    hideToast();
+    showView("home");
+    window.scrollTo(0, 0);
+    if (clear) {
+      q.value = "";
+      autoGrow();
+      updateCount();
+      q.focus({ preventScroll: true });
+    }
+  }
+
+  // Searching
+
+  const MESSAGES = [
+    "Consulting the archive…",
+    "Threading the projector…",
+    "Checking the credits…",
+    "Asking the usher who saw it last…",
+    "Flipping through the TV listings…",
+    "Dusting off the reels…",
+    "Cueing up the scene…",
+  ];
+  let messageTimer = 0;
+
+  function setMessage(message) {
+    const el = $("loader-message");
+    el.textContent = message;
+    el.classList.remove("is-new");
+    void el.offsetWidth; // restart the fade
+    el.classList.add("is-new");
+  }
+
+  function startMessages() {
+    let i = 0;
+    setMessage(MESSAGES[0]);
+    clearInterval(messageTimer);
+    messageTimer = setInterval(() => {
+      i = (i + 1) % MESSAGES.length;
+      setMessage(MESSAGES[i]);
+    }, 2600);
+  }
+
+  function stopMessages() {
+    clearInterval(messageTimer);
+  }
+
+  function showLoading(input) {
+    loading = { streaming: false, heard: null, titles: 0 };
+    $("loader-query").textContent = quoted(truncate(input.description, 160));
+    $("loader-heard").hidden = true;
+    $("loader-considering").hidden = true;
+    $("loader-titles").replaceChildren();
+    startMessages();
+    showView("loading");
+    window.scrollTo(0, 0);
+    $("loader-title").focus({ preventScroll: true });
+  }
+
+  function jsonString(raw) {
+    try {
+      return JSON.parse(`"${raw}"`);
+    } catch {
+      return null;
+    }
+  }
+
+  /** Show what Claude has decided so far while its JSON answer streams in. */
+  function onStream({ text: soFar }) {
+    if (!loading) return;
+    if (!loading.streaming) {
+      loading.streaming = true;
+      stopMessages();
+      setMessage("Weighing the likeliest titles…");
+    }
+    const heard = /"interpretation"\s*:\s*"((?:[^"\\]|\\.)*)"/.exec(soFar);
+    const heardText = heard ? jsonString(heard[1]) : null;
+    if (heardText && heardText !== loading.heard) {
+      loading.heard = heardText;
+      $("loader-heard-text").textContent = heardText;
+      $("loader-heard").hidden = false;
+    }
+    const titles = [...soFar.matchAll(/"title"\s*:\s*"((?:[^"\\]|\\.)*)"/g)].map((m) => jsonString(m[1]));
+    if (titles.length > loading.titles) {
+      const list = $("loader-titles");
+      for (const title of titles.slice(loading.titles)) if (title) list.append(h("li", { class: "chip" }, title));
+      loading.titles = titles.length;
+      $("loader-considering").hidden = false;
+    }
+  }
+
+  // Results
+
+  function showResults(result) {
+    loading = null;
+    stopMessages();
+    current = { result, rejected: new Set(), selected: 0, found: null, featureRank: null, lastRejected: null };
+    $("view-results").replaceChildren(
+      h(
+        "div",
+        { class: "results" },
+        summary(result.input, result.interpretation),
+        result.notices.length > 0 && h("ul", { class: "wrap notices" }, result.notices.map(noticeItem)),
+        h("div", { class: "results-body", id: "results-body" }),
+      ),
+    );
+    renderBody(true);
+    showView("results");
+    window.scrollTo(0, 0);
+    $("summary-title").focus({ preventScroll: true });
+    const [top] = result.matches;
+    announce(
+      top
+        ? `${plural(result.matches.length, "possible match", "possible matches")}. The likeliest is ${top.title}.`
+        : "No matches yet.",
+    );
+  }
+
+  function noticeItem(notice) {
+    const body = h("div", { class: "notice-body" }, notice.text);
+    if (notice.allow && permissionsReachable()) {
+      const button = h("button", { type: "button", class: "link-button" }, "Allow Claude");
+      button.addEventListener("click", () => allowClaude(button));
+      body.append(" ", button);
+    }
+    return h("li", { class: "notice" }, body);
+  }
+
+  function summary(input, interpretation) {
+    const showHeard = interpretation && interpretation.toLowerCase() !== input.description.toLowerCase();
+    const chips = [
+      ...input.clues.map((clue) =>
+        h(
+          "li",
+          {},
+          h(
+            "button",
+            {
+              type: "button",
+              class: "chip",
+              title: "Remove this detail",
+              onclick: () => runSearch({ ...input, clues: input.clues.filter((c) => c !== clue) }),
+            },
+            h("span", { "aria-hidden": "true" }, "+"),
+            ` ${clue} `,
+            h("span", { class: "remove", "aria-hidden": "true" }, "✕"),
+            h("span", { class: "visually-hidden" }, "(remove)"),
+          ),
+        ),
+      ),
+      ...input.excluded.map((label) =>
+        h(
+          "li",
+          {},
+          h(
+            "button",
+            {
+              type: "button",
+              class: "chip excluded-chip",
+              title: "Bring this title back",
+              onclick: () => runSearch({ ...input, excluded: input.excluded.filter((e) => e !== label) }),
+            },
+            "Not ",
+            h("s", {}, label),
+            " ",
+            h("span", { class: "remove", "aria-hidden": "true" }, "✕"),
+            h("span", { class: "visually-hidden" }, "(bring back)"),
+          ),
+        ),
+      ),
+    ];
+    return h(
+      "section",
+      { class: "wrap summary", "aria-labelledby": "summary-title" },
+      h("p", { class: "eyebrow" }, "You remembered"),
+      h("h1", { class: "quote", id: "summary-title", tabindex: "-1" }, quoted(input.description)),
+      chips.length > 0 && h("ul", { class: "refinements", "aria-label": "Details added" }, chips),
+      showHeard && h("p", { class: "heard" }, h("span", { class: "heard-label" }, "We heard"), interpretation),
+    );
+  }
+
+  /** The feature, the follow-up question, the contenders and the ways to narrow down. */
+  function renderBody(first = false) {
+    const body = $("results-body");
+    if (!body || !current) return null;
+    const { result, rejected } = current;
+    const drafts = { question: $("refine-question")?.value ?? "", detail: $("refine-detail")?.value ?? "" };
+    const visible = result.matches.filter((m) => !rejected.has(m.rank));
+    const featured = visible.find((m) => m.rank === current.selected) ?? visible[0] ?? null;
+    const contenders = visible.filter((m) => m !== featured);
+    const ruledOut = result.matches.filter((m) => rejected.has(m.rank)).map((m) => titleLabel(m.title, m.year));
+    const live = canRefine();
+
+    const parts = [];
+    if (result.matches.length === 0) {
+      parts.push(stumped(result));
+    } else if (!featured) {
+      parts.push(outOfGuesses(result, ruledOut));
+    } else {
+      parts.push(featureSection(featured, !first && featured.rank === current.featureRank));
+      if (result.followUpQuestion && live) {
+        parts.push(h("div", { class: "wrap follow-up" }, refineBox(result.input, ruledOut, result.followUpQuestion)));
+      }
+      if (contenders.length > 0) parts.push(contendersSection(contenders));
+      parts.push(live ? refineSection(result, ruledOut) : moreFromReel(result));
+    }
+    body.replaceChildren(...parts);
+    body.classList.toggle("is-settled", !first);
+    current.featureRank = featured ? featured.rank : null;
+    if ($("refine-question")) $("refine-question").value = drafts.question;
+    if ($("refine-detail")) $("refine-detail").value = drafts.detail;
+    return featured;
+  }
+
+  function confidenceLabel(value) {
+    if (value >= 85) return "Almost certainly";
+    if (value >= 60) return "Very likely";
+    if (value >= 35) return "Possibly";
+    if (value >= 12) return "A long shot";
+    return "Outside chance";
+  }
+
+  function meter(value, size) {
+    const pct = Math.max(0, Math.min(100, Math.round(value)));
+    const label = confidenceLabel(pct);
+    return h(
+      "div",
+      { class: `meter meter-${size}` },
+      h(
+        "div",
+        { class: "meter-text" },
+        h("span", { class: "meter-label" }, label),
+        h("span", { class: "meter-value" }, `${pct}% match`),
+      ),
+      h(
+        "div",
+        {
+          class: "meter-track",
+          role: "meter",
+          "aria-label": "Match confidence",
+          "aria-valuemin": 0,
+          "aria-valuemax": 100,
+          "aria-valuenow": pct,
+          "aria-valuetext": `${pct}%, ${label.toLowerCase()}`,
+        },
+        h("div", { class: "meter-fill", style: { width: `${Math.max(pct, 2)}%` } }),
+      ),
+    );
+  }
+
+  function screenPanel(m) {
+    const caption = m.scene ?? "Trailers and the best-known scenes";
+    return h(
+      "figure",
+      { class: "clip" },
+      h(
+        "a",
+        { class: "screen", href: youtubeSearchUrl(m.clipQuery), ...newTab },
+        icon("reel-bright", "screen-mark"),
+        h("span", { class: "screen-title" }, "Roll the clip"),
+        h("span", { class: "screen-text" }, caption),
+        h(
+          "span",
+          { class: "btn btn-gold btn-small screen-action" },
+          m.scene ? "Find the scene on YouTube" : "Find clips on YouTube",
+          h("span", { "aria-hidden": "true" }, "↗"),
+        ),
+        h("span", { class: "visually-hidden" }, "(opens in a new tab)"),
+      ),
+      h("figcaption", { class: "clip-note" }, "Opens a YouTube search in a new tab."),
+    );
+  }
+
+  function featureSection(m, settled) {
+    const tv = m.kind === "tv";
+    const facts = [
+      yearsLabel(m),
+      tv ? (m.seasonCount ? plural(m.seasonCount, "season") : null) : m.runtime ? `${m.runtime} min` : null,
+      tv ? (m.networks[0] ?? null) : null,
+      m.language,
+      m.genres.slice(0, tv ? 2 : 3).join(", ") || null,
+    ].filter(Boolean);
+
+    const info = h(
+      "div",
+      { class: "info" },
+      h("p", { class: "eyebrow" }, m.rank === 0 ? "The feature presentation" : "Now screening"),
+      h("h2", { class: "title", id: "feature-title", tabindex: "-1" }, m.title),
+      m.originalTitle && h("p", { class: "original-title", lang: m.languageCode }, m.originalTitle),
+      h(
+        "p",
+        { class: "meta facts" },
+        h("span", { class: "kind-badge" }, kindLabel(m.kind)),
+        facts.map((fact, i) => h("span", { class: i > 0 ? "meta-sep" : null }, fact)),
+      ),
+      meter(m.confidence, "md"),
+      m.why && h("p", { class: "why" }, m.why),
+      m.episode && episodePanel(m.episode),
+      (m.matchedClues.length > 0 || m.unmatchedClues.length > 0) &&
+        h(
+          "ul",
+          { class: "clues", "aria-label": "How your description lines up" },
+          m.matchedClues.map((c) =>
+            h("li", { class: "chip chip-match" }, h("span", { class: "visually-hidden" }, "Matches:"), c),
+          ),
+          m.unmatchedClues.map((c) =>
+            h("li", { class: "chip chip-miss" }, h("span", { class: "visually-hidden" }, "Doesn’t match:"), c),
+          ),
+        ),
+      (m.madeBy || m.cast.length > 0) &&
+        h(
+          "dl",
+          { class: "credits" },
+          m.madeBy && h("div", {}, h("dt", {}, tv ? "Created by" : "Directed by"), h("dd", {}, m.madeBy)),
+          m.cast.length > 0 && h("div", {}, h("dt", {}, "Starring"), h("dd", {}, m.cast.join(", "))),
+        ),
+      m.overview && h("p", { class: "overview" }, m.overview),
+      current.found === m.rank ? foundPanel(m) : featureActions(m),
+    );
+
+    return h(
+      "section",
+      { class: "wrap feature", id: "feature", "aria-labelledby": "feature-title" },
+      h(
+        "div",
+        { class: `feature-frame${settled ? " is-settled" : ""}` },
+        h("div", { class: "media" }, screenPanel(m)),
+        info,
+      ),
+    );
+  }
+
+  function episodePanel(e) {
+    const aired = formatDate(e.airDate);
+    return h(
+      "div",
+      { class: "episode" },
+      h("p", { class: "small-label" }, "The episode"),
+      h("p", { class: "episode-title" }, episodeLabel(e), e.title && [" ", h("em", {}, quoted(e.title))]),
+      aired && h("p", { class: "meta" }, `First aired ${aired}`),
+      e.overview && h("p", { class: "episode-overview" }, e.overview),
+    );
+  }
+
+  function featureActions(m) {
+    return h(
+      "div",
+      { class: "actions", id: "feature-actions" },
+      h("button", { type: "button", class: "btn", onclick: () => markFound(m) }, "That’s the one"),
+      h("button", { type: "button", class: "btn btn-ghost", onclick: () => reject(m) }, "Not it"),
+    );
+  }
+
+  function foundPanel(m) {
+    return h(
+      "div",
+      { class: "found", role: "status" },
+      icon("reel", "found-mark"),
+      h(
+        "div",
+        { class: "found-text" },
+        h("p", { class: "found-title" }, "Found it. Enjoy the show."),
+        h(
+          "p",
+          { class: "found-links" },
+          h(
+            "a",
+            { class: "link", href: justWatchUrl(m.title), ...newTab },
+            "Where to watch ↗",
+            h("span", { class: "visually-hidden" }, "(opens in a new tab)"),
+          ),
+          h(
+            "a",
+            { class: "link", href: youtubeSearchUrl(m.clipQuery), ...newTab },
+            "More clips ↗",
+            h("span", { class: "visually-hidden" }, "(opens in a new tab)"),
+          ),
+        ),
+      ),
+    );
+  }
+
+  function plaque(m) {
+    const length = m.title.length;
+    const size = length > 32 ? " is-longer" : length > 18 ? " is-long" : "";
+    return h(
+      "div",
+      { class: "poster" },
+      h(
+        "div",
+        { class: "poster-inner" },
+        h(
+          "div",
+          { class: `plaque${size}` },
+          icon("reel", "plaque-mark"),
+          h("span", { class: "plaque-title" }, m.title),
+          m.year && h("span", { class: "plaque-year" }, String(m.year)),
+        ),
+      ),
+    );
+  }
+
+  function contenderCard(m) {
+    const years = yearsLabel(m) ?? "Year unknown";
+    return h(
+      "li",
+      { class: "slab card" },
+      h(
+        "button",
+        { type: "button", class: "card-poster", tabindex: "-1", "aria-hidden": "true", onclick: () => screen(m) },
+        plaque(m),
+      ),
+      h(
+        "div",
+        { class: "card-body" },
+        h("h3", { class: "card-title" }, m.title),
+        h(
+          "p",
+          { class: "meta" },
+          kindLabel(m.kind),
+          h("span", { class: "meta-sep" }, years),
+          m.madeBy && h("span", { class: "meta-sep" }, m.madeBy),
+        ),
+        meter(m.confidence, "sm"),
+        m.why && h("p", { class: "card-why" }, m.why),
+        h(
+          "div",
+          { class: "card-actions" },
+          h(
+            "button",
+            { type: "button", class: "btn btn-small", onclick: () => screen(m) },
+            "Screen this",
+            h("span", { class: "visually-hidden" }, `(${m.title})`),
+          ),
+          h(
+            "button",
+            { type: "button", class: "btn btn-ghost btn-small", onclick: () => reject(m) },
+            "Not it",
+            h("span", { class: "visually-hidden" }, `(${m.title})`),
+          ),
+        ),
+      ),
+    );
+  }
+
+  function sectionHead(eyebrow, id, title, extra) {
+    return h(
+      "div",
+      { class: "section-head" },
+      h("p", { class: "eyebrow" }, eyebrow),
+      h("h2", { class: "section-title", id, tabindex: "-1" }, title),
+      extra,
+    );
+  }
+
+  function contendersSection(list) {
+    return h(
+      "section",
+      { class: "wrap contenders", "aria-labelledby": "contenders-title" },
+      sectionHead("Also in the running", "contenders-title", "Other contenders", divider()),
+      h("ul", { class: "grid" }, list.map(contenderCard)),
+    );
+  }
+
+  function refineBox(input, ruledOut, question) {
+    const id = question ? "refine-question" : "refine-detail";
+    const field = h("input", {
+      id,
+      type: "text",
+      class: "refine-input",
+      maxlength: Math.max(60, LIMITS.clue - (question ? question.length + 1 : 0)),
+      placeholder: question ? "Your answer…" : "e.g. “it was animated”, “late 90s”, “set in Paris”",
+      autocomplete: "off",
+    });
+    const error = h("p", { class: "refine-error", role: "alert", hidden: true }, "Type a detail first.");
+    field.addEventListener("input", () => {
+      error.hidden = true;
+      field.removeAttribute("aria-invalid");
+    });
+    return h(
+      "form",
+      {
+        class: `refine-box${question ? " is-question" : ""}`,
+        novalidate: true,
+        onsubmit: (event) => {
+          event.preventDefault();
+          const answer = tidy(field.value, LIMITS.clue);
+          if (!answer) {
+            error.hidden = false;
+            field.setAttribute("aria-invalid", "true");
+            field.focus();
+            return;
+          }
+          runSearch(refined(input, question ? `${question} ${answer}` : answer, ruledOut));
+        },
+      },
+      h(
+        "label",
+        { class: "refine-label", for: id },
+        question
+          ? [h("span", { class: "eyebrow" }, "One question to narrow it down"), h("span", { class: "question-text" }, question)]
+          : h("span", { class: "eyebrow" }, "Add a detail"),
+      ),
+      h("div", { class: "refine-input-row" }, field, h("button", { type: "submit", class: "btn btn-small" }, "Refine")),
+      error,
+    );
+  }
+
+  function refineSection(result, ruledOut) {
+    return h(
+      "section",
+      { class: "wrap refine", "aria-labelledby": "refine-title" },
+      sectionHead(
+        "Still searching?",
+        "refine-title",
+        "Not quite right?",
+        h(
+          "p",
+          { class: "section-lede" },
+          "Tell us one more thing you remember, or rule them all out and we’ll dig deeper into the archive.",
+        ),
+      ),
+      h(
+        "div",
+        { class: "refine-row" },
+        refineBox(result.input, ruledOut, null),
+        h(
+          "div",
+          { class: "keep-looking" },
+          h("p", { class: "keep-looking-text" }, "None of these?"),
+          h("button", { type: "button", class: "btn btn-ghost", onclick: () => keepLooking(result) }, "Keep looking"),
+        ),
+      ),
+    );
+  }
+
+  function exampleChips(skipPrompt) {
+    return h(
+      "ul",
+      { class: "examples" },
+      DEMO.map((demo, i) =>
+        demo.prompt === skipPrompt
+          ? null
+          : h("li", {}, h("button", { type: "button", class: "chip", "data-demo": i }, demo.label)),
+      ),
+    );
+  }
+
+  /** Without Claude, the demo reel itself is the way to keep exploring. */
+  function moreFromReel(result) {
+    return h(
+      "section",
+      { class: "wrap refine", "aria-labelledby": "reel-title" },
+      sectionHead(
+        "Still searching?",
+        "reel-title",
+        "More from the demo reel",
+        h(
+          "p",
+          { class: "section-lede" },
+          "Live search isn’t available in this view, so these are the titles GetReel can find right now.",
+        ),
+      ),
+      exampleChips(result.input.description),
+    );
+  }
+
+  function stumped(result) {
+    const demoOnly = result.mode === "demo";
+    return h(
+      "section",
+      { class: "wrap stumped", "aria-labelledby": "stumped-title" },
+      icon("reel", "stumped-mark"),
+      h(
+        "h2",
+        { class: "section-title", id: "stumped-title", tabindex: "-1" },
+        demoOnly ? "That one isn’t in the demo reel" : "Even our archivists are stumped",
+      ),
+      h(
+        "p",
+        { class: "section-lede" },
+        demoOnly
+          ? "Without live search, GetReel only knows the ten titles below. Pick one to see how it works."
+          : "Claude couldn’t place that one yet. Add another detail you remember: an actor, a decade, a setting, a line of dialogue.",
+      ),
+      demoOnly ? exampleChips(null) : h("div", { class: "stumped-refine" }, refineBox(result.input, [], null)),
+    );
+  }
+
+  function outOfGuesses(result, ruledOut) {
+    const live = canRefine();
+    return h(
+      "section",
+      { class: "wrap stumped", "aria-labelledby": "out-title" },
+      icon("reel", "stumped-mark"),
+      h("h2", { class: "section-title", id: "out-title", tabindex: "-1" }, "You’ve ruled out every guess"),
+      h(
+        "p",
+        { class: "section-lede" },
+        live
+          ? "GetReel will search again without them. Adding one more detail you remember will help even more."
+          : "That was every title the demo reel had for this description.",
+      ),
+      live && h("div", { class: "stumped-refine" }, refineBox(result.input, ruledOut, null)),
+      h(
+        "div",
+        { class: "stumped-actions" },
+        live && h("button", { type: "button", class: "btn", onclick: () => keepLooking(result) }, "Keep looking"),
+        h("button", { type: "button", class: "btn btn-ghost", onclick: undoAll }, "Bring them back"),
+      ),
+    );
+  }
+
+  // Narrowing down
+
+  function refined(input, clue, ruledOut) {
+    return {
+      description: input.description,
+      clues: [...input.clues, clue].slice(-LIMITS.clues),
+      excluded: [...new Set([...input.excluded, ...ruledOut])].slice(-LIMITS.excluded),
+    };
+  }
+
+  function keepLooking(result) {
+    const labels = result.matches.map((m) => titleLabel(m.title, m.year));
+    runSearch({
+      ...result.input,
+      excluded: [...new Set([...result.input.excluded, ...labels])].slice(-LIMITS.excluded),
+    });
+  }
+
+  function screen(m) {
+    current.selected = m.rank;
+    renderBody();
+    $("feature")?.scrollIntoView({ behavior: smooth(), block: "start" });
+    $("feature-title")?.focus({ preventScroll: true });
+    announce(`Now screening ${m.title}.`);
+  }
+
+  function reject(m) {
+    const wasFeatured = current.featureRank === m.rank;
+    current.rejected.add(m.rank);
+    if (current.found === m.rank) current.found = null;
+    current.lastRejected = m;
+    const featured = renderBody();
+    showToast(m);
+    announce(
+      wasFeatured && featured ? `Ruled out ${m.title}. Now screening ${featured.title}.` : `Ruled out ${m.title}.`,
+    );
+    const target = wasFeatured
+      ? ($("feature-title") ?? $("out-title"))
+      : ($("contenders-title") ?? $("refine-title") ?? $("reel-title") ?? $("feature-title"));
+    target?.focus({ preventScroll: !wasFeatured });
+  }
+
+  function undo() {
+    const m = current?.lastRejected;
+    if (!m) return;
+    current.rejected.delete(m.rank);
+    current.lastRejected = null;
+    hideToast();
+    renderBody();
+    announce(`${m.title} is back in the running.`);
+    $("feature-title")?.focus({ preventScroll: true });
+  }
+
+  function undoAll() {
+    current.rejected.clear();
+    current.lastRejected = null;
+    hideToast();
+    renderBody();
+    announce("Every guess is back in the running.");
+    $("feature-title")?.focus();
+  }
+
+  function markFound(m) {
+    current.found = m.rank;
+    $("feature-actions")?.replaceWith(foundPanel(m));
+    announce(`Found it: ${m.title}.`);
+  }
+
+  let toastTimer = 0;
+
+  function showToast(m) {
+    $("toast-title").textContent = m.title;
+    $("toast").hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(hideToast, 7000);
+  }
+
+  function hideToast() {
+    clearTimeout(toastTimer);
+    $("toast").hidden = true;
+    if (current) current.lastRejected = null;
+  }
+
+  // Errors
+
+  const ERRORS = {
+    rate_limited: {
+      title: "Claude needs a breather",
+      text: "There have been a lot of searches in a short time, or your Claude usage limit has been reached. Wait a minute, then try again.",
+      retry: true,
+    },
+    session_expired: {
+      title: "Please sign in again",
+      text: "Your Claude session has expired. Sign in to Claude again, then try your search.",
+      retry: true,
+    },
+    refused: {
+      title: "Claude couldn’t help with that one",
+      text: "Claude declined this description. Try describing the film or show another way.",
+      edit: true,
+    },
+    prompt_too_large: {
+      title: "That’s a lot to remember",
+      text: "The description is too long to send. Shorten it and search again.",
+      edit: true,
+    },
+    invalid_json: {
+      title: "The answer came back garbled",
+      text: "Claude’s reply couldn’t be read. Try again, or describe it a little differently.",
+      retry: true,
+      edit: true,
+    },
+    empty_completion: {
+      title: "The reel came back empty",
+      text: "Claude didn’t send an answer. Try describing it a little differently.",
+      edit: true,
+    },
+    upstream_error: {
+      title: "The projector jammed",
+      text: "GetReel couldn’t reach Claude just now. Check your connection, then try again.",
+      retry: true,
+    },
+  };
+
+  function showError(input, error) {
+    const code = error && typeof error.code === "string" ? error.code : "upstream_error";
+    const copy = ERRORS[code] ?? ERRORS.upstream_error;
+    current = null;
+    hideToast();
+    $("view-results").replaceChildren(
+      h(
+        "div",
+        { class: "results" },
+        summary(input, null),
+        h(
+          "section",
+          { class: "wrap stumped", "aria-labelledby": "error-title" },
+          icon("reel", "stumped-mark"),
+          h("h2", { class: "section-title", id: "error-title" }, copy.title),
+          h("p", { class: "section-lede" }, copy.text),
+          h(
+            "div",
+            { class: "stumped-actions" },
+            copy.retry && h("button", { type: "button", class: "btn", onclick: () => runSearch(input) }, "Try again"),
+            copy.edit &&
+              h(
+                "button",
+                { type: "button", class: copy.retry ? "btn btn-ghost" : "btn", onclick: () => editDescription(input) },
+                "Edit the description",
+              ),
+            h("button", { type: "button", class: "btn btn-ghost", onclick: () => goHome({ clear: true }) }, "New search"),
+          ),
+        ),
+      ),
+    );
+    showView("results");
+    window.scrollTo(0, 0);
+    $("summary-title").focus({ preventScroll: true });
+    announce(copy.title);
+  }
+
+  function editDescription(input) {
+    goHome();
+    q.value = input.description;
+    autoGrow();
+    updateCount();
+    q.focus();
+  }
+
+  // ── Live-search status and permission ─────────────────────────────────
+
+  const permissionsReachable = () => Boolean(window.claude && typeof window.claude.use === "function");
+
+  function updateModeNote() {
+    const note = $("mode-note");
+    if (sampleFn === undefined) {
+      note.hidden = true;
+      return;
+    }
+    const live = canLive();
+    note.hidden = false;
+    note.classList.toggle("is-live", live);
+    $("mode-text").textContent = live
+      ? liveUsed
+        ? "Claude identifies anything you describe, using your own Claude account."
+        : "Claude identifies anything you describe, using your own Claude account. Your first search asks for your permission."
+      : liveBlocked === "not_granted"
+        ? "Live search is off because Claude wasn’t allowed. The ten titles in the demo reel still work."
+        : "Live search isn’t available here, so GetReel can only find the ten titles in its demo reel.";
+    $("mode-allow").hidden = live || liveBlocked !== "not_granted" || !permissionsReachable();
+  }
+
+  async function allowClaude(button) {
+    let allowed = false;
+    try {
+      const permissions = await claudeUse("permissions");
+      if (permissions) {
+        await permissions.manage();
+        const state = await permissions.state("sample");
+        allowed = state === "granted" || state === "prompt";
+      }
+    } catch {
+      allowed = false;
+    }
+    if (allowed) {
+      liveBlocked = null;
+      updateModeNote();
+      if (current && view === "results") renderBody();
+      announce("Live search is on again.");
+      return;
+    }
+    const hint = h("span", {}, "Open this page’s Permissions menu to allow Claude.");
+    if (button.id === "mode-allow") {
+      $("mode-text").textContent = "Live search is off. Open this page’s Permissions menu to allow Claude.";
+      button.hidden = true;
+    } else {
+      button.replaceWith(hint);
+    }
+  }
+
+  // ── Search box ────────────────────────────────────────────────────────
+
+  const PLACEHOLDERS = [
+    { text: "The one where a man befriends a volleyball on a desert island…", demo: true },
+    { text: "The sitcom episode where they carry a couch up the stairs yelling ‘pivot’…", demo: true },
+    { text: "A black-and-white film where a husband makes his wife think she’s going mad…", demo: true },
+    { text: "A Korean show with deadly children’s games and green tracksuits…", demo: true },
+    { text: "A bus that will explode if it drops below fifty miles an hour…", demo: false },
+    { text: "A Spanish heist series with red jumpsuits and Dalí masks…", demo: true },
+    { text: "An old musical where a man dances in the rain with an umbrella…", demo: false },
+  ];
+  let placeholderIndex = 0;
+
+  setInterval(() => {
+    if (view !== "home" || q.value || document.activeElement === q) return;
+    const pool = sampleFn === null || liveBlocked ? PLACEHOLDERS.filter((p) => p.demo) : PLACEHOLDERS;
+    placeholderIndex = (placeholderIndex + 1) % pool.length;
+    q.placeholder = pool[placeholderIndex].text;
+  }, 4200);
+
+  function autoGrow() {
+    q.style.height = "auto";
+    q.style.height = `${Math.min(q.scrollHeight, 240)}px`;
+  }
+
+  function updateCount() {
+    const remaining = LIMITS.description - q.value.length;
+    const count = $("q-count");
+    count.hidden = remaining >= 200;
+    count.textContent = `${remaining} characters left`;
+  }
+
+  function setFieldError(message) {
+    const error = $("q-error");
+    error.textContent = message ?? "";
+    error.hidden = !message;
+    if (message) {
+      q.setAttribute("aria-invalid", "true");
+      q.setAttribute("aria-describedby", "q-error q-hint");
+    } else {
+      q.removeAttribute("aria-invalid");
+      q.setAttribute("aria-describedby", "q-hint");
+    }
+  }
+
+  $("search-form").addEventListener("submit", (event) => {
+    event.preventDefault();
+    const description = tidy(q.value, LIMITS.description);
+    if (description.length < LIMITS.minDescription) {
+      setFieldError("Describe it in a few words first: a scene, a line, an actor, a feeling.");
+      q.focus();
+      return;
+    }
+    setFieldError(null);
+    runSearch({ description, clues: [], excluded: [] });
+  });
+
+  q.addEventListener("keydown", (event) => {
+    // Enter searches; Shift+Enter adds a new line.
+    if (event.key === "Enter" && !event.shiftKey && !event.isComposing) {
+      event.preventDefault();
+      $("search-form").requestSubmit();
+    }
+  });
+
+  q.addEventListener("input", () => {
+    autoGrow();
+    updateCount();
+    if (!$("q-error").hidden) setFieldError(null);
+  });
+
+  // ── Wiring ────────────────────────────────────────────────────────────
+
+  document.addEventListener("click", (event) => {
+    const target = event.target instanceof Element ? event.target.closest("[data-demo]") : null;
+    const demo = target ? DEMO[Number(target.getAttribute("data-demo"))] : null;
+    if (demo) runSearch({ description: demo.prompt, clues: [], excluded: [] });
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && view === "loading") stopSearch();
+  });
+
+  $("loader-stop").addEventListener("click", stopSearch);
+  $("toast-undo").addEventListener("click", undo);
+  $("header-logo").addEventListener("click", () => goHome());
+  $("nav-new").addEventListener("click", () => goHome({ clear: true }));
+  $("nav-how").addEventListener("click", () => {
+    $("how-it-works").scrollIntoView({ behavior: smooth(), block: "start" });
+  });
+  $("mode-allow").addEventListener("click", (event) => allowClaude(event.currentTarget));
+})();
+</script>

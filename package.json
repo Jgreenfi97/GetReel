@@ -11,7 +11,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "check": "npm run lint && npm run typecheck && npm test",
-    "marble": "python3 scripts/generate-marble.py"
+    "marble": "python3 scripts/generate-marble.py",
+    "artifact": "node artifact/build.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.3.0",

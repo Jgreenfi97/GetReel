@@ -10,6 +10,7 @@ A search engine for half-remembered films and TV series: a fuzzy description goe
 - `npm run check`: lint + typecheck + unit tests (run before committing)
 - `npm run build`: production build (also validates Cache Components rules)
 - `npm run marble -- --seed N`: regenerate marble textures (Python 3 + numpy + Pillow)
+- `npm run artifact`: build the single-page Claude artifact into `artifact/dist/` (Node 22.18+; reads `src/lib/demo.ts` directly)
 
 ## Architecture
 
@@ -27,3 +28,4 @@ A search engine for half-remembered films and TV series: a fuzzy description goe
 - Ornaments are computed SVG in `src/components/ornaments.tsx`; gold gradients are referenced by id from `<GoldDefs />` in the root layout.
 - TMDB images are stored as `https://image.tmdb.org/t/p/<kind>/<file>` refs; the custom image loader picks the real size.
 - Never let crawlers or prefetches trigger paid searches: `/search` is disallowed in robots.txt and links to searches use default (shell-only) prefetching.
+- `artifact/template.html` is a standalone, plain-JS port of the site for claude.ai (live search via the artifact `sample` capability). It mirrors the prompt in `claude.ts` and logic from `identification.ts`, `format.ts`, `locale.ts` and `findDemoCase`: keep them in step (table in `artifact/README.md`). Republish to the existing artifact URL rather than creating a new one.

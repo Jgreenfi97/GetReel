@@ -59,6 +59,10 @@ The simplest host is [Vercel](https://vercel.com), which is free for personal pr
 
 Any host that runs Node.js works (`npm run build`, then `npm start`).
 
+## 4. Share it inside Claude
+
+`artifact/` holds a single-page version of GetReel that runs as a Claude artifact, so friends and family can try it from a link with no hosting or API keys. The ten demo searches work for everyone, and anything else is answered by Claude on the viewer's own Claude account. Build it with `npm run artifact` (Node 22.18 or newer); [artifact/README.md](artifact/README.md) covers publishing and what differs from the full site.
+
 ---
 
 ## How it works
@@ -152,6 +156,7 @@ src/
     demo.ts               The ten demo searches
     search-params.ts      URL format for searches
 scripts/generate-marble.py   Generates the seamless marble textures
+artifact/                    The single-page Claude artifact version (template.html + build.mjs)
 tests/                       Unit tests (Vitest)
 ```
 
@@ -173,6 +178,7 @@ tests/                       Unit tests (Vitest)
 | `npm run lint` | ESLint |
 | `npm run typecheck` | TypeScript, including generated route types |
 | `npm run check` | Lint, typecheck and tests together |
+| `npm run artifact` | Build the Claude artifact page into `artifact/dist/` (Node 22.18+) |
 
 This project uses **Next.js 16** with *Cache Components*. Its rules differ from older Next.js; see `AGENTS.md` and the guides bundled in `node_modules/next/dist/docs/`.
 

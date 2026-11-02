@@ -43,3 +43,6 @@ next-env.d.ts
 
 # local screenshots / scratch output
 /screenshots/
+
+# built Claude artifact (npm run artifact)
+/artifact/dist/
